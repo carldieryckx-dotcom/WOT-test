@@ -1,0 +1,1087 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Verstraete Party — Zuid-Afrika, Eswatini & Lesotho 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>
+  :root {
+    --ink: #1a1410;
+    --sand: #f5efe6;
+    --cream: #faf6ef;
+    --sun: #d97706;
+    --earth: #8b4513;
+    --gold: #c9a961;
+    --muted: #6b5d4f;
+    --accent: #b85c38;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Inter', sans-serif;
+    color: var(--ink);
+    background: var(--cream);
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+  h1, h2, h3, h4 {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 400;
+    line-height: 1.2;
+    letter-spacing: 0.02em;
+  }
+
+  /* HERO */
+  .hero {
+    position: relative;
+    height: 100vh;
+    min-height: 700px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: white;
+    overflow: hidden;
+  }
+  .hero-bg {
+    position: absolute;
+    inset: 0;
+    background-image: url('https://images.unsplash.com/photo-1580060839134-75a5edca2e99?w=2400&q=85');
+    background-size: cover;
+    background-position: center;
+    filter: brightness(0.6);
+    transform: scale(1.05);
+    animation: zoom 25s ease-out infinite alternate;
+  }
+  @keyframes zoom {
+    from { transform: scale(1.05); }
+    to { transform: scale(1.15); }
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(26,20,16,0.2) 0%, rgba(26,20,16,0.1) 40%, rgba(26,20,16,0.7) 100%);
+    z-index: 1;
+  }
+  .hero-content {
+    position: relative;
+    z-index: 2;
+    padding: 2rem;
+    max-width: 900px;
+  }
+  .hero .eyebrow {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.8rem;
+    letter-spacing: 0.5em;
+    text-transform: uppercase;
+    margin-bottom: 2rem;
+    opacity: 0.9;
+  }
+  .hero h1 {
+    font-size: clamp(3rem, 8vw, 6.5rem);
+    font-weight: 300;
+    margin-bottom: 1.5rem;
+    font-style: italic;
+  }
+  .hero .subtitle {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(1.2rem, 2vw, 1.6rem);
+    letter-spacing: 0.1em;
+    margin-bottom: 3rem;
+    opacity: 0.95;
+  }
+  .hero .dates {
+    display: inline-block;
+    padding: 0.8rem 2.5rem;
+    border: 1px solid rgba(255,255,255,0.4);
+    font-size: 0.85rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+  }
+  .scroll-hint {
+    position: absolute;
+    bottom: 3rem;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 2;
+    color: white;
+    font-size: 0.7rem;
+    letter-spacing: 0.3em;
+    opacity: 0.7;
+    animation: bounce 2s infinite;
+  }
+  @keyframes bounce {
+    0%, 100% { transform: translateX(-50%) translateY(0); }
+    50% { transform: translateX(-50%) translateY(10px); }
+  }
+
+  /* INTRO */
+  .intro {
+    padding: 8rem 2rem;
+    max-width: 800px;
+    margin: 0 auto;
+    text-align: center;
+  }
+  .intro .ornament {
+    color: var(--gold);
+    font-size: 1.5rem;
+    letter-spacing: 1rem;
+    margin-bottom: 2rem;
+  }
+  .intro h2 {
+    font-size: clamp(2rem, 4vw, 3rem);
+    margin-bottom: 2rem;
+    font-style: italic;
+    color: var(--earth);
+  }
+  .intro p {
+    font-size: 1.15rem;
+    color: var(--muted);
+    margin-bottom: 1.5rem;
+    font-weight: 300;
+  }
+  .stats {
+    display: flex;
+    justify-content: center;
+    gap: 4rem;
+    margin-top: 4rem;
+    flex-wrap: wrap;
+  }
+  .stat { text-align: center; }
+  .stat-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 3rem;
+    color: var(--accent);
+    line-height: 1;
+    font-weight: 500;
+  }
+  .stat-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--muted);
+    margin-top: 0.5rem;
+  }
+
+  /* MAP SECTION */
+  .map-section {
+    padding: 6rem 2rem;
+    background: var(--sand);
+  }
+  .section-header {
+    max-width: 800px;
+    margin: 0 auto 4rem;
+    text-align: center;
+  }
+  .section-header .label {
+    font-size: 0.75rem;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 1rem;
+  }
+  .section-header h2 {
+    font-size: clamp(2.2rem, 4vw, 3.5rem);
+    color: var(--ink);
+    font-style: italic;
+  }
+  #map {
+    max-width: 1200px;
+    margin: 0 auto;
+    height: 600px;
+    border-radius: 4px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+  }
+  .map-legend {
+    max-width: 1200px;
+    margin: 2rem auto 0;
+    display: flex;
+    gap: 2rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    font-size: 0.85rem;
+    color: var(--muted);
+  }
+  .map-legend span {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .map-legend .dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--accent);
+  }
+  .map-legend .line {
+    width: 30px;
+    height: 2px;
+    background: var(--accent);
+    border-top: 1px dashed var(--accent);
+  }
+
+  /* TIMELINE NAV */
+  .timeline-nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(250, 246, 239, 0.95);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(0,0,0,0.08);
+    padding: 1rem 0;
+  }
+  .timeline-nav-inner {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    overflow-x: auto;
+    scrollbar-width: thin;
+  }
+  .timeline-nav-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1rem;
+    color: var(--earth);
+    font-style: italic;
+    white-space: nowrap;
+    padding-right: 1rem;
+    border-right: 1px solid rgba(0,0,0,0.1);
+  }
+  .day-chip {
+    padding: 0.5rem 1rem;
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    border: 1px solid rgba(0,0,0,0.15);
+    border-radius: 2rem;
+    color: var(--muted);
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.2s;
+    background: transparent;
+    font-family: inherit;
+  }
+  .day-chip:hover {
+    background: var(--accent);
+    color: white;
+    border-color: var(--accent);
+  }
+  .day-chip.active {
+    background: var(--ink);
+    color: white;
+    border-color: var(--ink);
+  }
+
+  /* DAYS */
+  .days {
+    padding: 5rem 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  .day {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    gap: 4rem;
+    margin-bottom: 8rem;
+    align-items: start;
+  }
+  .day:nth-child(even) {
+    grid-template-columns: 1.2fr 1fr;
+  }
+  .day:nth-child(even) .day-image { order: 2; }
+  .day:nth-child(even) .day-content { order: 1; }
+
+  .day-image {
+    position: relative;
+    height: 500px;
+    overflow: hidden;
+    border-radius: 2px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+  }
+  .day-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 1s;
+  }
+  .day-image:hover img { transform: scale(1.05); }
+  .day-number {
+    position: absolute;
+    top: 2rem;
+    left: 2rem;
+    background: rgba(26,20,16,0.85);
+    color: white;
+    padding: 0.75rem 1.5rem;
+    font-size: 0.7rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+  }
+  .day-image .caption {
+    position: absolute;
+    bottom: 0.75rem;
+    right: 1rem;
+    color: rgba(255,255,255,0.75);
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    background: rgba(0,0,0,0.4);
+    padding: 0.25rem 0.5rem;
+    border-radius: 2px;
+  }
+  .day-image .caption a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .day-content { padding-top: 1rem; }
+  .day-date {
+    font-size: 0.75rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 1rem;
+  }
+  .day-content h3 {
+    font-size: clamp(1.8rem, 3vw, 2.8rem);
+    margin-bottom: 1.5rem;
+    color: var(--ink);
+  }
+  .day-content p {
+    color: var(--muted);
+    font-size: 1.02rem;
+    margin-bottom: 1.5rem;
+    font-weight: 300;
+  }
+  .day-highlights {
+    list-style: none;
+    margin: 2rem 0;
+    padding: 2rem;
+    background: var(--sand);
+    border-left: 3px solid var(--accent);
+  }
+  .day-highlights li {
+    padding: 0.5rem 0;
+    font-size: 0.95rem;
+    color: var(--ink);
+    font-weight: 400;
+    padding-left: 1.5rem;
+    position: relative;
+  }
+  .day-highlights li::before {
+    content: '✦';
+    position: absolute;
+    left: 0;
+    color: var(--gold);
+    font-size: 0.8rem;
+  }
+
+  .hotel-card {
+    margin-top: 2rem;
+    background: white;
+    border: 1px solid rgba(0,0,0,0.08);
+    overflow: hidden;
+    display: grid;
+    grid-template-columns: 140px 1fr;
+    min-height: 110px;
+  }
+  .hotel-thumb {
+    width: 140px;
+    height: 100%;
+    object-fit: cover;
+  }
+  .hotel-body {
+    padding: 1.25rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 0.3rem;
+  }
+  .hotel-label {
+    font-size: 0.7rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .hotel-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.35rem;
+    color: var(--ink);
+    font-style: italic;
+    line-height: 1.2;
+  }
+  .hotel-link {
+    font-size: 0.75rem;
+    color: var(--accent);
+    text-decoration: none;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-top: 0.25rem;
+  }
+  .hotel-link:hover { text-decoration: underline; }
+
+  /* FACT BLOCKS */
+  .fact-section {
+    padding: 6rem 2rem;
+    background: linear-gradient(135deg, var(--earth) 0%, var(--accent) 100%);
+    color: white;
+    margin: 4rem 0;
+  }
+  .fact-section .section-header .label { color: rgba(255,255,255,0.8); }
+  .fact-section h2 { color: white; }
+  .facts-grid {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 2rem;
+  }
+  .fact-card {
+    padding: 2rem;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.15);
+    backdrop-filter: blur(5px);
+  }
+  .fact-card .fact-icon {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2.5rem;
+    font-style: italic;
+    color: var(--gold);
+    margin-bottom: 1rem;
+  }
+  .fact-card h4 {
+    font-size: 1.4rem;
+    margin-bottom: 1rem;
+    color: white;
+  }
+  .fact-card p {
+    font-size: 0.9rem;
+    line-height: 1.7;
+    opacity: 0.95;
+    font-weight: 300;
+  }
+
+  /* REGION SEPARATOR */
+  .region-divider {
+    text-align: center;
+    padding: 4rem 2rem;
+    position: relative;
+  }
+  .region-divider::before,
+  .region-divider::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    width: 25%;
+    height: 1px;
+    background: var(--gold);
+  }
+  .region-divider::before { left: 10%; }
+  .region-divider::after { right: 10%; }
+  .region-divider .region-label {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.8rem;
+    font-style: italic;
+    color: var(--earth);
+    letter-spacing: 0.1em;
+  }
+  .region-divider .region-sub {
+    font-size: 0.75rem;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-top: 0.5rem;
+  }
+
+  /* CREDITS */
+  .credits-section {
+    padding: 4rem 2rem;
+    background: var(--sand);
+    color: var(--muted);
+    font-size: 0.78rem;
+    line-height: 1.8;
+  }
+  .credits-section .inner {
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+  .credits-section h3 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.5rem;
+    font-style: italic;
+    color: var(--earth);
+    margin-bottom: 1.5rem;
+  }
+  .credits-section ul {
+    list-style: none;
+    columns: 2;
+    column-gap: 3rem;
+  }
+  .credits-section li {
+    padding: 0.3rem 0;
+    break-inside: avoid;
+  }
+  .credits-section a {
+    color: var(--accent);
+    text-decoration: none;
+  }
+  .credits-section a:hover { text-decoration: underline; }
+
+  /* FOOTER */
+  footer {
+    background: var(--ink);
+    color: rgba(255,255,255,0.8);
+    padding: 5rem 2rem 3rem;
+    text-align: center;
+  }
+  footer .ornament {
+    color: var(--gold);
+    letter-spacing: 1rem;
+    margin-bottom: 2rem;
+  }
+  footer h3 {
+    font-size: 2rem;
+    color: white;
+    margin-bottom: 1rem;
+    font-style: italic;
+  }
+  footer p {
+    font-size: 0.9rem;
+    max-width: 500px;
+    margin: 0 auto 2rem;
+    font-weight: 300;
+    opacity: 0.7;
+  }
+  footer .credit {
+    margin-top: 3rem;
+    font-size: 0.7rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    opacity: 0.4;
+  }
+
+  /* LEAFLET CUSTOM */
+  .custom-marker {
+    background: var(--accent);
+    border: 3px solid white;
+    border-radius: 50%;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+  }
+  .leaflet-popup-content-wrapper {
+    border-radius: 2px;
+    font-family: 'Inter', sans-serif;
+  }
+  .leaflet-popup-content {
+    margin: 12px 16px;
+    font-size: 0.85rem;
+  }
+  .leaflet-popup-content b {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1rem;
+    font-style: italic;
+    color: var(--ink);
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 900px) {
+    .day, .day:nth-child(even) {
+      grid-template-columns: 1fr;
+      gap: 2rem;
+      margin-bottom: 5rem;
+    }
+    .day:nth-child(even) .day-image { order: 0; }
+    .day:nth-child(even) .day-content { order: 0; }
+    .day-image { height: 350px; }
+    #map { height: 450px; }
+    .intro, .days { padding: 4rem 1.5rem; }
+    .stats { gap: 2rem; }
+    .hotel-card { grid-template-columns: 100px 1fr; }
+    .hotel-thumb { width: 100px; }
+    .credits-section ul { columns: 1; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-content">
+    <div class="eyebrow">De reis van jullie leven</div>
+    <h1>Zuid-Afrika</h1>
+    <div class="subtitle">Cape Town · Safari · Eswatini · Lesotho · Drakensberg</div>
+    <div class="dates">26 Mei — 12 Juni 2026</div>
+  </div>
+  <div class="scroll-hint">scroll ↓</div>
+</section>
+
+<!-- INTRO -->
+<section class="intro">
+  <div class="ornament">✦ ✦ ✦</div>
+  <h2>Familie Verstraete, welkom aan boord</h2>
+  <p>Achttien dagen. Drie landen. Een wereld vol kleur, geur en ontmoetingen.</p>
+  <p>Van de majestueuze Tafelberg in Kaapstad, over de wijngaarden van Stellenbosch, diep het struikgewas in voor het Big Five-avontuur in Manyeleti, langs de mystieke Panoramaroute, dwars door het koninkrijk Eswatini, tot aan de donderende watervallen van Drakensberg en de Sani Pass van Lesotho.</p>
+  <div class="stats">
+    <div class="stat"><div class="stat-num">18</div><div class="stat-label">Dagen</div></div>
+    <div class="stat"><div class="stat-num">3</div><div class="stat-label">Landen</div></div>
+    <div class="stat"><div class="stat-num">9</div><div class="stat-label">Verblijven</div></div>
+    <div class="stat"><div class="stat-num">2000+</div><div class="stat-label">km avontuur</div></div>
+  </div>
+</section>
+
+<!-- MAP -->
+<section class="map-section" id="map-section">
+  <div class="section-header">
+    <div class="label">De route</div>
+    <h2>Jullie reis in kaart</h2>
+  </div>
+  <div id="map"></div>
+  <div class="map-legend">
+    <span><span class="dot"></span> Overnachting</span>
+    <span><span class="line"></span> Route</span>
+    <span>Klik op een marker voor meer info</span>
+  </div>
+</section>
+
+<!-- TIMELINE NAV -->
+<nav class="timeline-nav" id="timelineNav">
+  <div class="timeline-nav-inner">
+    <span class="timeline-nav-title">Dagnavigatie</span>
+  </div>
+</nav>
+
+<!-- DAYS -->
+<section class="days" id="days-container"></section>
+
+<!-- FACT SECTION (Safari) -->
+<section class="fact-section">
+  <div class="section-header">
+    <div class="label">Wist je dat</div>
+    <h2>Manyeleti — "plek van de sterren"</h2>
+  </div>
+  <div class="facts-grid">
+    <div class="fact-card">
+      <div class="fact-icon">i.</div>
+      <h4>Zonder hekken</h4>
+      <p>Manyeleti grenst direct aan het Kruger National Park, zonder afrastering. Dieren migreren vrij tussen de reservaten — je kijkt dus naar écht wild Afrika.</p>
+    </div>
+    <div class="fact-card">
+      <div class="fact-icon">ii.</div>
+      <h4>Big Five</h4>
+      <p>Leeuw, luipaard, olifant, buffel en neushoorn — allemaal thuis in Manyeleti. Morgen- en avondgame drives geven de beste kans om ze te spotten.</p>
+    </div>
+    <div class="fact-card">
+      <div class="fact-icon">iii.</div>
+      <h4>Mantobeni Camp</h4>
+      <p>Klassieke safaritenten onder oude bomen, midden in de bush. Geen hekken, geen wifi, enkel het geluid van Afrika bij kampvuurnacht.</p>
+    </div>
+    <div class="fact-card">
+      <div class="fact-icon">iv.</div>
+      <h4>Koudere winter</h4>
+      <p>Eind mei tot begin juni is winterseizoen in Zuid-Afrika — koele ochtenden (neem een fleece!) maar perfect voor wildspotting: vegetatie is laag en dieren verzamelen bij waterpoelen.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FACT SECTION (Lesotho) -->
+<section class="fact-section" style="background: linear-gradient(135deg, #4a5d3a 0%, #8b7355 100%);">
+  <div class="section-header">
+    <div class="label">Wist je dat</div>
+    <h2>Lesotho — Het koninkrijk in de wolken</h2>
+  </div>
+  <div class="facts-grid">
+    <div class="fact-card">
+      <div class="fact-icon">i.</div>
+      <h4>Hoogste land ter wereld</h4>
+      <p>Lesotho is het enige land waarvan het volledige grondgebied boven 1000 meter ligt. Het laagste punt ligt hoger dan de top van de hoogste Belgische berg.</p>
+    </div>
+    <div class="fact-card">
+      <div class="fact-icon">ii.</div>
+      <h4>Sani Pass</h4>
+      <p>De legendarische grenspas die jullie nemen via 4x4. Een bergweg vol haarspeldbochten die naar 2.876m klimt — één van de meest adembenemende routes van Afrika.</p>
+    </div>
+    <div class="fact-card">
+      <div class="fact-icon">iii.</div>
+      <h4>Basotho-dekens</h4>
+      <p>De kleurrijke wollen dekens die lokale mensen dragen zijn méér dan kleding — ze zijn een symbool van identiteit, status en traditie in elke Basotho-familie.</p>
+    </div>
+    <div class="fact-card">
+      <div class="fact-icon">iv.</div>
+      <h4>Highest pub in Africa</h4>
+      <p>Bovenaan de Sani Pass wacht de "Highest Pub in Africa" — een lokaal biertje met uitzicht over de Drakensberg, op 2.874m hoogte. Een anekdote voor het leven.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="ornament">✦ ✦ ✦</div>
+  <h3>Bon voyage, Familie Verstraete</h3>
+  <p>Mogen deze 18 dagen jullie meer brengen dan foto's alleen — verhalen, geuren, ontmoetingen die de tijd overleven.</p>
+  <div class="credit">Samengesteld door World of Travel · 7th Sense</div>
+</footer>
+
+<script>
+// === FOTO-METADATA ===
+// Destinatiefoto's van Wikimedia Commons (CC-licentie).
+// Hotelfoto's rechtstreeks van de officiele hotel-websites.
+const photoMeta = {
+  // Destinaties
+  "dest_table_mountain":  { file: "images/dest_table_mountain.jpg",  caption: "Tafelberg, Kaapstad",                   credit: "Dietmar Rabich / Wikimedia Commons",              license: "CC BY-SA 4.0",  source: "https://commons.wikimedia.org/wiki/File:Cape_Town_(ZA),_Table_Mountain,_Seilbahn,_Gedenkplatte_--_2024_--_2870.jpg" },
+  "dest_cape_peninsula":  { file: "images/dest_cape_peninsula.jpg",  caption: "Chapman's Peak Drive, Kaapstad",        credit: "TapticInfo / Wikimedia Commons",                   license: "CC BY-SA 4.0",  source: "https://commons.wikimedia.org/wiki/File:Chapman%27s_Peak_2022_08.jpg" },
+  "dest_cape_point":      { file: "images/dest_cape_point.jpg",      caption: "Cape Point, Kaap de Goede Hoop",        credit: "Diego Delso / Wikimedia Commons",                  license: "CC BY-SA 4.0",  source: "https://commons.wikimedia.org/wiki/File:Cape_Point,_Sud%C3%A1frica,_2018-07-23,_DD_105.jpg" },
+  "dest_boulders":        { file: "images/dest_boulders.jpg",        caption: "Afrikaanse pinguïns, Boulders Beach",   credit: "Satdeep Gill / Wikimedia Commons",                 license: "CC BY-SA 4.0",  source: "https://commons.wikimedia.org/wiki/File:Penguins_at_Boulders_Beach_04.jpg" },
+  "dest_stellenbosch":    { file: "images/dest_stellenbosch.jpg",    caption: "Simonsberg, Stellenbosch",              credit: "Khanya Ntantiso Arosi / Wikimedia Commons",        license: "CC BY-SA 4.0",  source: "https://commons.wikimedia.org/wiki/File:Simonsberg_Stellenbosch.jpg" },
+  "dest_winelands":       { file: "images/dest_winelands.jpg",       caption: "Wijngaard bij Stellenbosch",            credit: "Azwi / Panoramio via Wikimedia Commons",           license: "CC BY-SA 3.0",  source: "https://commons.wikimedia.org/wiki/File:Wine_farm_near_Stellenbosch_-_panoramio.jpg" },
+  "dest_leopard_safari":  { file: "images/dest_leopard_safari.jpg",  caption: "Luipaard in Kruger-gebied",             credit: "Charles J. Sharp / Wikimedia Commons",             license: "CC BY-SA 4.0",  source: "https://commons.wikimedia.org/wiki/File:Leopard_(Panthera_pardus_pardus)_Kruger.jpg" },
+  "dest_lions_safari":    { file: "images/dest_lions_safari.jpg",    caption: "Leeuwen in Kruger National Park",       credit: "Bernard DUPONT / Wikimedia Commons",               license: "CC BY-SA 2.0",  source: "https://commons.wikimedia.org/wiki/File:Day_51_Lions_(Panthera_leo)_pride_in_Letaba_dry_riverbed_..._(53320129233).jpg" },
+  "dest_elephants_sunset":{ file: "images/dest_elephants_sunset.jpg",caption: "Olifanten bij zonsondergang, Kruger",   credit: "leftcoastenvy / Wikimedia Commons",                license: "CC BY 2.0",     source: "https://commons.wikimedia.org/wiki/File:Evening_with_the_Elephants_-_Kruger_National_Park_(34132518654).jpg" },
+  "dest_gods_window":     { file: "images/dest_gods_window.jpg",     caption: "God's Window, Blyde River Canyon",      credit: "South African Tourism / Wikimedia Commons",        license: "CC BY 2.0",     source: "https://commons.wikimedia.org/wiki/File:God%27s_Window,_Blyde_River_Canyon,_Mpumalanga,_South_Africa_(20329167719).jpg" },
+  "dest_three_rondavels": { file: "images/dest_three_rondavels.jpg", caption: "Three Rondavels, Blyde River",          credit: "Ad Meskens / Wikimedia Commons",                   license: "CC BY-SA 4.0",  source: "https://commons.wikimedia.org/wiki/File:Blyde_Rivier_Three_Rondavels_03.jpg" },
+  "dest_bourkes_luck":    { file: "images/dest_bourkes_luck.jpg",    caption: "Bourke's Luck Potholes",                credit: "Dietmar Rabich / Wikimedia Commons",               license: "CC BY-SA 4.0",  source: "https://commons.wikimedia.org/wiki/File:Blyde_River_Canyon_Nature_Reserve_(ZA),_Blyde_River,_Bourke%27s_Luck_Potholes_--_2024_--_9984.jpg" },
+  "dest_eswatini":        { file: "images/dest_eswatini.jpg",        caption: "Ezulwini-vallei, Eswatini",             credit: "Pierre André Leclercq / Wikimedia Commons",        license: "CC BY-SA 4.0",  source: "https://commons.wikimedia.org/wiki/File:La_Cha%C3%AEne_Ezulwini,_Malkerns_(Swaziland).jpg" },
+  "dest_st_lucia":        { file: "images/dest_st_lucia.jpg",        caption: "iSimangaliso Wetland Park, St Lucia",   credit: "Christian Wörtz / Wikimedia Commons",              license: "CC BY-SA 2.5",  source: "https://commons.wikimedia.org/wiki/File:Greater_St._Lucia_Wetland_Park,South_Africa.jpg" },
+  "dest_white_rhino":     { file: "images/dest_white_rhino.jpg",     caption: "Witte neushoorns, Hluhluwe-Imfolozi",   credit: "Bjørn Christian Tørrissen / Wikimedia Commons",    license: "CC BY-SA 4.0",  source: "https://commons.wikimedia.org/wiki/File:Hluhluwe-Rhinos-and-Lions.JPG" },
+  "dest_sani_pass":       { file: "images/dest_sani_pass.jpg",       caption: "Sani Pass, Lesotho grens",              credit: "Amada44 / Wikimedia Commons",                      license: "Public domain", source: "https://commons.wikimedia.org/wiki/File:Sani_Pass_003.jpg" },
+  "dest_lesotho_falls":   { file: "images/dest_lesotho_falls.jpg",   caption: "Maletsunyane Falls, Lesotho",           credit: "BagelBelt / Wikimedia Commons",                    license: "Public domain", source: "https://commons.wikimedia.org/wiki/File:Maletsunyanefalls.JPG" },
+  "dest_drakensberg":     { file: "images/dest_drakensberg.jpg",     caption: "Drakensberg Amfitheater",               credit: "User:Bothar / Wikimedia Commons",                  license: "Public domain", source: "https://commons.wikimedia.org/wiki/File:Amphitheatre_Drakensberg.jpg" },
+  "dest_cathedral_peak":  { file: "images/dest_cathedral_peak.jpg",  caption: "Cathedral Peak, Drakensberg",           credit: "Sara Atkins / Wikimedia Commons",                  license: "CC BY 2.0",     source: "https://commons.wikimedia.org/wiki/File:CathedralPeak.jpg" },
+  "dest_johannesburg":    { file: "images/dest_johannesburg.jpg",    caption: "Johannesburg skyline",                  credit: "Frankbel / Wikimedia Commons",                     license: "CC BY-SA 4.0",  source: "https://commons.wikimedia.org/wiki/File:Johannesburg-city-skyline-night.jpg" },
+  // Hotels (rechtstreeks van hoteleigen websites)
+  "hotel_cloud9":         { file: "images/cloud9.jpg",               caption: "Cloud 9 Boutique Hotel",                credit: "Cloud 9 Boutique Hotel",                           license: "© eigenaar",    source: "https://www.hotelcloudnine.com/" },
+  "hotel_sugarbird":      { file: "images/sugarbird.jpg",            caption: "Sugarbird Manor, Stellenbosch",         credit: "Sugarbird Manor",                                  license: "© eigenaar",    source: "https://www.sugarbirdmanor.co.za/" },
+  "hotel_honeyguide":     { file: "images/honeyguide.jpg",           caption: "Honeyguide Mantobeni Tented Camp",      credit: "Honeyguide Camps",                                 license: "© eigenaar",    source: "https://www.honeyguidecamp.com/honeyguide-mantobeni-camp" },
+  "hotel_bambuu":         { file: "images/bambuu.jpeg",              caption: "Bambuu Lakeside Lodge",                 credit: "Bambuu Lakeside Lodge",                            license: "© eigenaar",    source: "https://www.bambuulodge.com/" },
+  "hotel_mantenga":       { file: "images/mantenga.png",             caption: "Mantenga Lodge, Eswatini",              credit: "Mantenga Lodge",                                   license: "© eigenaar",    source: "https://www.mantengalodge.com/" },
+  "hotel_stlucia":        { file: "images/stlucia.jpg",              caption: "St Lucia Kingfisher Lodge",             credit: "St Lucia Kingfisher Lodge",                        license: "© eigenaar",    source: "https://www.stluciakingfisherlodge.co.za/" },
+  "hotel_moorcroft":      { file: "images/moorcroft.jpg",            caption: "Moorcroft Manor, Underberg",            credit: "Moorcroft Manor",                                  license: "© eigenaar",    source: "https://www.moorcroft.co.za/" },
+  "hotel_montusi":        { file: "images/montusi.jpeg",             caption: "Montusi Mountain Lodge, Drakensberg",   credit: "Montusi Mountain Lodge",                           license: "© eigenaar",    source: "https://montusi.co.za/" },
+  "hotel_parkwood":       { file: "images/parkwood.jpeg",            caption: "The Parkwood Luxury Guest Lodge",       credit: "The Parkwood Luxury Guest Lodge",                  license: "© eigenaar",    source: "https://www.theparkwood.com/" },
+};
+
+// === REISDATA ===
+const tripData = [
+  {
+    day: 1, date: "26 Mei 2026", dateShort: "26/05",
+    title: "Aankomst in Kaapstad",
+    region: "Kaapstad",
+    blurb: "Na de lange vlucht landen jullie in Kaapstad. Even op adem komen: de huurwagen ophalen en zo'n 25 kilometer rijden naar de boutique hotel. De avond is vrij — misschien even de zee zien en op de jetlag ingaan met een rustige maaltijd.",
+    highlights: ["Aankomst Cape Town International", "Huurwagen ophalen", "Check-in Cloud 9 Boutique Hotel"],
+    hotelKey: "hotel_cloud9",
+    hotel: { name: "Cloud 9 Boutique Hotel", url: "https://www.hotelcloudnine.com/" },
+    photoKey: "dest_table_mountain",
+    coords: [-33.9249, 18.4241], location: "Kaapstad"
+  },
+  {
+    day: 2, date: "27 Mei 2026", dateShort: "27/05",
+    title: "Kaapstad — Tafelberg & stad",
+    region: "Kaapstad",
+    blurb: "Vandaag staan jullie oog in oog met één van de zeven natuurwonderen van de wereld. De kabelbaan brengt jullie naar de top van de Tafelberg voor een 360°-panorama. Daarna is er tijd om het hart van Kaapstad te verkennen — de Company Gardens, het kleurrijke Bo-Kaap, of de V&A Waterfront.",
+    highlights: ["Kabelbaan Tafelberg (weer permitting)", "Company Gardens wandeling", "V&A Waterfront verkenning", "Optioneel: Kirstenbosch Botanical Gardens"],
+    hotelKey: "hotel_cloud9",
+    hotel: { name: "Cloud 9 Boutique Hotel", url: "https://www.hotelcloudnine.com/" },
+    photoKey: "dest_cape_peninsula",
+    coords: [-33.9249, 18.4241], location: "Kaapstad"
+  },
+  {
+    day: 3, date: "28 Mei 2026", dateShort: "28/05",
+    title: "Het Kaapse Schiereiland",
+    region: "Kaapstad",
+    blurb: "Een van de mooiste kustritten ter wereld. Langs Chapman's Peak Drive richting Kaap de Goede Hoop, waar twee oceanen elkaar ontmoeten. Op de terugweg stoppen bij Boulders Beach — waar kolonies Afrikaanse pinguïns vrolijk over het witte zand waggelen.",
+    highlights: ["Seal Island boottocht Hout Bay", "Chapman's Peak Drive", "Cape Point National Park", "Pinguïns spotten op Boulders Beach"],
+    hotelKey: "hotel_cloud9",
+    hotel: { name: "Cloud 9 Boutique Hotel", url: "https://www.hotelcloudnine.com/" },
+    photoKey: "dest_cape_point",
+    coords: [-34.3568, 18.4740], location: "Kaap de Goede Hoop"
+  },
+  {
+    day: 4, date: "29 Mei 2026", dateShort: "29/05",
+    title: "Kaapstad — Stellenbosch",
+    region: "Winelands",
+    blurb: "Jullie verlaten de kust en rijden het binnenland in: welkom in de Winelands. Een ochtend 9-holes golf op Devonvale Golf Course is het perfecte begin. De namiddag wacht Stellenbosch zelf — een parel van eeuwenoude Cape Dutch architectuur, kunstgaleries en misschien een eerste wijnproeverij.",
+    highlights: ["9-holes golf Devonvale Golf Course", "Aankomst in Stellenbosch", "Wandeling door historische stadskern", "Optioneel: Waterford Wine Estate"],
+    hotelKey: "hotel_sugarbird",
+    hotel: { name: "Sugarbird Manor", url: "https://www.sugarbirdmanor.co.za/" },
+    photoKey: "dest_stellenbosch",
+    coords: [-33.9321, 18.8602], location: "Stellenbosch"
+  },
+  {
+    day: 5, date: "30 Mei 2026", dateShort: "30/05",
+    title: "Een dag in de Winelands",
+    region: "Winelands",
+    blurb: "Een volledige dag voor de wijngaarden. Fiets- of wandelexcursies door de glooiende heuvels van Stellenbosch of Franschhoek, wijnproeverijen op wereldberoemde estates zoals Babylonstoren, La Motte of Waterford. Dit is Zuid-Afrika zoals in een schilderij.",
+    highlights: ["Franschhoek of Stellenbosch fietstour (optioneel)", "Bezoek aan Babylonstoren of La Motte", "Wijnproeverij met chocoladepairing", "Franschhoek dorpswandeling"],
+    hotelKey: "hotel_sugarbird",
+    hotel: { name: "Sugarbird Manor", url: "https://www.sugarbirdmanor.co.za/" },
+    photoKey: "dest_winelands",
+    coords: [-33.9067, 19.1220], location: "Franschhoek"
+  },
+  {
+    day: 6, date: "31 Mei 2026", dateShort: "31/05",
+    title: "Naar de safari — Manyeleti",
+    region: "Safari",
+    blurb: "Vroeg vertrek: vlucht naar Hoedspruit. Van daaruit rijden jullie naar Manyeleti Private Game Reserve — een onbehekt wildreservaat grenzend aan Kruger. Aankomst bij Mantobeni Tented Camp, lunch en dan de allereerste game drive in een open 4x4. Het Afrikaanse avontuur begint.",
+    highlights: ["Vlucht Kaapstad → Hoedspruit", "Rijden naar Manyeleti", "Welkom bij Mantobeni Camp", "Eerste avond-game drive"],
+    hotelKey: "hotel_honeyguide",
+    hotel: { name: "Honeyguide Mantobeni Tented Camp", url: "https://www.honeyguidecamp.com/honeyguide-mantobeni-camp" },
+    photoKey: "dest_leopard_safari",
+    coords: [-24.6833, 31.4833], location: "Manyeleti Private Game Reserve"
+  },
+  {
+    day: 7, date: "1 Juni 2026", dateShort: "01/06",
+    title: "Safari in Manyeleti",
+    region: "Safari",
+    blurb: "Vandaag draait alles om het wild. Een ochtend-game drive bij dageraad — als de savanne ontwaakt. Terug naar het kamp voor ontbijt, lunch en een siesta. Later weer op pad voor de avondrit — met sundowners tussen de acacia's.",
+    highlights: ["Ochtend game drive (5u)", "Luxe ontbijt in de bush", "Middagrust in het kamp", "Sundowner game drive"],
+    hotelKey: "hotel_honeyguide",
+    hotel: { name: "Honeyguide Mantobeni Tented Camp", url: "https://www.honeyguidecamp.com/honeyguide-mantobeni-camp" },
+    photoKey: "dest_lions_safari",
+    coords: [-24.6833, 31.4833], location: "Manyeleti Private Game Reserve"
+  },
+  {
+    day: 8, date: "2 Juni 2026", dateShort: "02/06",
+    title: "Nog een dag op safari",
+    region: "Safari",
+    blurb: "Twee nieuwe game drives, nieuwe kansen. Jullie gidsen kennen elk spoor, elk teken, elk geluid. Misschien is vandaag de dag van de luipaard, of van een kudde olifanten bij de drinkplaats. De bush verveelt nooit.",
+    highlights: ["Ochtendrit door het wild", "Rustige middag", "Avond game drive", "Diner onder Afrikaanse sterren"],
+    hotelKey: "hotel_honeyguide",
+    hotel: { name: "Honeyguide Mantobeni Tented Camp", url: "https://www.honeyguidecamp.com/honeyguide-mantobeni-camp" },
+    photoKey: "dest_elephants_sunset",
+    coords: [-24.6833, 31.4833], location: "Manyeleti Private Game Reserve"
+  },
+  {
+    day: 9, date: "3 Juni 2026", dateShort: "03/06",
+    title: "Manyeleti — Panoramaroute — Hazyview",
+    region: "Panorama",
+    blurb: "Na een laatste ochtenddrive laten jullie de bush achter. Op weg naar Hazyview komt een van Zuid-Afrika's mooiste autoroutes: de Panoramaroute. God's Window, Bourke's Luck Potholes, de Three Rondavels — elk uitzicht indrukwekkender dan het vorige.",
+    highlights: ["Laatste game drive", "God's Window uitzicht", "Three Rondavels & Bourke's Luck Potholes", "Optioneel: Graskop Gorge Lift"],
+    hotelKey: "hotel_bambuu",
+    hotel: { name: "Bambuu Lakeside Lodge", url: "https://www.bambuulodge.com/" },
+    photoKey: "dest_three_rondavels",
+    coords: [-24.9648, 31.1233], location: "Hazyview / Panoramaroute"
+  },
+  {
+    day: 10, date: "4 Juni 2026", dateShort: "04/06",
+    title: "Hazyview — Eswatini",
+    region: "Eswatini",
+    blurb: "Vandaag steken jullie een grens over naar het koninkrijk Eswatini (voorheen Swaziland). Bij Jeppes Reef gaan jullie door de douane. Mantenga Lodge wacht met uitzicht op de Usutu-vallei en oude rotsformaties — een totaal andere wereld dan wat jullie tot nu toe zagen.",
+    highlights: ["Grens over naar Eswatini (Jeppes Reef)", "Aankomst Mantenga Lodge", "Middag ontspannen", "Cultureel Eswatini verkennen"],
+    hotelKey: "hotel_mantenga",
+    hotel: { name: "Mantenga Lodge", url: "https://www.mantengalodge.com/" },
+    photoKey: "dest_eswatini",
+    coords: [-26.4500, 31.2000], location: "Eswatini"
+  },
+  {
+    day: 11, date: "5 Juni 2026", dateShort: "05/06",
+    title: "Eswatini — St Lucia Wetlands",
+    region: "Kust",
+    blurb: "Weer op weg — deze keer naar het UNESCO-werelderfgoed St Lucia Wetlands. De rit van 334km voert door wisselende landschappen, via grenspost Golela terug naar Zuid-Afrika. Bij aankomst meteen aan boord voor een bootcruise tussen nijlpaarden en krokodillen in de estuarium.",
+    highlights: ["Grens over bij Golela", "Aankomst St Lucia", "Namiddag bootcruise op St Lucia Estuarium", "Nijlpaarden & krokodillen spotten"],
+    hotelKey: "hotel_stlucia",
+    hotel: { name: "St Lucia Kingfisher Lodge", url: "https://www.stluciakingfisherlodge.co.za/" },
+    photoKey: "dest_st_lucia",
+    coords: [-28.3754, 32.4122], location: "St Lucia Wetlands"
+  },
+  {
+    day: 12, date: "6 Juni 2026", dateShort: "06/06",
+    title: "Hluhluwe-Imfolozi Game Reserve",
+    region: "Kust",
+    blurb: "Een extra safari-ervaring! Volledige dagtocht door het oudste wildreservaat van Afrika: Hluhluwe-Imfolozi, beroemd om zijn neushoornpopulatie. Met ontbijt in het park, lunch en game drive — een totaal andere ervaring dan Manyeleti.",
+    highlights: ["Full day guided game drive", "Breakfast & lunch inbegrepen", "Neushoorns spotten (het reservaat redde de witte neushoorn van uitsterven)", "Terug naar St Lucia"],
+    hotelKey: "hotel_stlucia",
+    hotel: { name: "St Lucia Kingfisher Lodge", url: "https://www.stluciakingfisherlodge.co.za/" },
+    photoKey: "dest_white_rhino",
+    coords: [-28.2000, 32.0000], location: "Hluhluwe-Imfolozi"
+  },
+  {
+    day: 13, date: "7 Juni 2026", dateShort: "07/06",
+    title: "St Lucia — Underberg",
+    region: "Drakensberg",
+    blurb: "Een langere rit (448km) brengt jullie naar het hart van de Zuid-Drakensberg: Underberg, het startpunt van de Sani Pass. Moorcroft Manor is een oase van rust met eeuwenoude tuinen.",
+    highlights: ["Lange rit naar het binnenland", "Aankomst in Underberg", "Avond in Moorcroft Manor", "Klaar voor het Lesotho-avontuur morgen"],
+    hotelKey: "hotel_moorcroft",
+    hotel: { name: "Moorcroft Manor", url: "https://www.moorcroft.co.za/" },
+    photoKey: "dest_drakensberg",
+    coords: [-29.7833, 29.5000], location: "Underberg"
+  },
+  {
+    day: 14, date: "8 Juni 2026", dateShort: "08/06",
+    title: "Sani Pass naar Lesotho",
+    region: "Drakensberg",
+    blurb: "Het hoogtepunt van de reis letterlijk. In een 4x4 wordt de legendarische Sani Pass beklommen — een bergweg die kronkelt tot 2.876m. Bovenaan wacht Lesotho: het koninkrijk in de wolken. Een bezoek aan een lokale Basotho-hut, een biertje in de Highest Pub in Africa, en adembenemende uitzichten over de Drakensberg.",
+    highlights: ["Pick-up vanaf Moorcroft Manor", "Sani Pass 4x4 beklimming", "Lesotho: Basotho-dorp bezoek", "Highest Pub in Africa", "Terug naar Underberg"],
+    hotelKey: "hotel_moorcroft",
+    hotel: { name: "Moorcroft Manor", url: "https://www.moorcroft.co.za/" },
+    photoKey: "dest_sani_pass",
+    coords: [-29.5833, 29.2833], location: "Sani Pass, Lesotho"
+  },
+  {
+    day: 15, date: "9 Juni 2026", dateShort: "09/06",
+    title: "Underberg — Drakensberg noord",
+    region: "Drakensberg",
+    blurb: "Van de zuidelijke naar de noordelijke Drakensberg: 302km door een van de mooiste berggebieden van Afrika. Aankomst bij Montusi Mountain Lodge, een familiaal gerund juweel met uitzicht over de Amfitheater — een van de meest iconische bergwanden ter wereld.",
+    highlights: ["Rit naar Noord-Drakensberg", "Aankomst Montusi Mountain Lodge", "Uitzicht op het Amfitheater", "Diner bij de lodge"],
+    hotelKey: "hotel_montusi",
+    hotel: { name: "Montusi Mountain Lodge", url: "https://montusi.co.za/" },
+    photoKey: "dest_cathedral_peak",
+    coords: [-28.7167, 28.9000], location: "Drakensberg noord"
+  },
+  {
+    day: 16, date: "10 Juni 2026", dateShort: "10/06",
+    title: "Drakensberg — vrije dag",
+    region: "Drakensberg",
+    blurb: "Een volledige dag naar eigen keuze. Wandelingen op eigen hout, mountainbiken, paardrijden, of gewoon genieten van de stilte en het panorama. In de Drakensberg vindt tijd zichzelf opnieuw uit.",
+    highlights: ["Zelf wandelen op de trails", "Optioneel: mountainbiken, paardrijden, fishing", "Cathedral Peak Wine Estate bezoeken", "Avondeten bij de lodge"],
+    hotelKey: "hotel_montusi",
+    hotel: { name: "Montusi Mountain Lodge", url: "https://montusi.co.za/" },
+    photoKey: "dest_gods_window",
+    coords: [-28.7167, 28.9000], location: "Drakensberg noord"
+  },
+  {
+    day: 17, date: "11 Juni 2026", dateShort: "11/06",
+    title: "Drakensberg — Johannesburg",
+    region: "Afscheid",
+    blurb: "Het laatste stuk van de lange reis: 346km naar Johannesburg. Aankomst bij The Parkwood, een van de chicste boutique lodges van de stad — een waardige uitsmijter.",
+    highlights: ["Rit naar Johannesburg", "Check-in The Parkwood Luxury Guest Lodge", "Laatste avond in Zuid-Afrika"],
+    hotelKey: "hotel_parkwood",
+    hotel: { name: "The Parkwood Luxury Guest Lodge", url: "https://www.theparkwood.com/" },
+    photoKey: "dest_johannesburg",
+    coords: [-26.2041, 28.0473], location: "Johannesburg"
+  },
+  {
+    day: 18, date: "12 Juni 2026", dateShort: "12/06",
+    title: "Vertrek naar huis",
+    region: "Afscheid",
+    blurb: "De laatste ontbijt, een laatste blik in de spiegel van een reis vol kleuren. 29km naar OR Tambo International Airport — en dan terug naar België. Maar Afrika reist mee, dat is zeker.",
+    highlights: ["Ontbijt", "Rit naar OR Tambo Airport", "Huurwagen inleveren", "Vlucht naar België"],
+    hotelKey: null,
+    hotel: null,
+    photoKey: "dest_boulders",
+    coords: [-26.1392, 28.2460], location: "OR Tambo International"
+  }
+];
+
+// === TIMELINE NAV ===
+const navInner = document.querySelector('.timeline-nav-inner');
+tripData.forEach(d => {
+  const chip = document.createElement('button');
+  chip.className = 'day-chip';
+  chip.textContent = `Dag ${d.day}`;
+  chip.dataset.day = d.day;
+  chip.onclick = () => {
+    document.getElementById(`day-${d.day}`).scrollIntoView({behavior: 'smooth', block: 'start'});
+  };
+  navInner.appendChild(chip);
+});
+
+// === DAYS RENDER ===
+const daysContainer = document.getElementById('days-container');
+let lastRegion = null;
+tripData.forEach(d => {
+  if (d.region !== lastRegion) {
+    const divider = document.createElement('div');
+    divider.className = 'region-divider';
+    divider.innerHTML = `
+      <div class="region-sub">Hoofdstuk</div>
+      <div class="region-label">${d.region}</div>
+    `;
+    daysContainer.appendChild(divider);
+    lastRegion = d.region;
+  }
+
+  const photo = photoMeta[d.photoKey];
+  const hotelPhoto = d.hotelKey ? photoMeta[d.hotelKey] : null;
+
+  const dayDiv = document.createElement('article');
+  dayDiv.className = 'day';
+  dayDiv.id = `day-${d.day}`;
+  dayDiv.innerHTML = `
+    <div class="day-image">
+      <img src="${photo.file}" alt="${photo.caption}" loading="lazy">
+      <div class="day-number">Dag ${String(d.day).padStart(2,'0')}</div>
+      <div class="caption" title="${photo.credit} — ${photo.license}">${photo.caption}</div>
+    </div>
+    <div class="day-content">
+      <div class="day-date">${d.date}</div>
+      <h3>${d.title}</h3>
+      <p>${d.blurb}</p>
+      <ul class="day-highlights">
+        ${d.highlights.map(h => `<li>${h}</li>`).join('')}
+      </ul>
+      ${d.hotel && hotelPhoto ? `
+        <div class="hotel-card">
+          <img class="hotel-thumb" src="${hotelPhoto.file}" alt="${d.hotel.name}" loading="lazy">
+          <div class="hotel-body">
+            <div class="hotel-label">Overnachting</div>
+            <div class="hotel-name">${d.hotel.name}</div>
+            ${d.hotel.url ? `<a class="hotel-link" href="${d.hotel.url}" target="_blank" rel="noopener">Website bezoeken →</a>` : ''}
+          </div>
+        </div>
+      ` : ''}
+    </div>
+  `;
+  daysContainer.appendChild(dayDiv);
+});
+
+// === MAP ===
+const map = L.map('map', { scrollWheelZoom: false }).setView([-28.5, 26], 6);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  attribution: '© OpenStreetMap contributors',
+  maxZoom: 18
+}).addTo(map);
+
+const uniqueLocations = [];
+const seen = new Set();
+tripData.forEach(d => {
+  const key = d.coords.join(',');
+  if (!seen.has(key)) { uniqueLocations.push(d); seen.add(key); }
+});
+
+const routeLatLngs = tripData.map(d => d.coords);
+L.polyline(routeLatLngs, {
+  color: '#b85c38', weight: 2.5, opacity: 0.8, dashArray: '6, 8'
+}).addTo(map);
+
+uniqueLocations.forEach(d => {
+  const marker = L.circleMarker(d.coords, {
+    radius: 9, fillColor: '#b85c38', color: 'white',
+    weight: 3, fillOpacity: 1
+  }).addTo(map);
+  marker.bindPopup(`
+    <b>${d.location}</b><br>
+    Dag ${d.day} — ${d.dateShort}<br>
+    ${d.hotel ? `<em>${d.hotel.name}</em>` : ''}
+  `);
+});
+
+map.fitBounds(L.latLngBounds(routeLatLngs), { padding: [40, 40] });
+map.once('focus', () => map.scrollWheelZoom.enable());
+map.on('click', () => map.scrollWheelZoom.enable());
+
+// === ACTIVE DAY IN NAV ===
+const chips = document.querySelectorAll('.day-chip');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const dayNum = entry.target.id.replace('day-', '');
+      chips.forEach(c => c.classList.remove('active'));
+      const activeChip = document.querySelector(`.day-chip[data-day="${dayNum}"]`);
+      if (activeChip) {
+        activeChip.classList.add('active');
+        activeChip.scrollIntoView({behavior: 'smooth', block: 'nearest', inline: 'center'});
+      }
+    }
+  });
+}, { rootMargin: '-40% 0px -50% 0px' });
+
+document.querySelectorAll('.day').forEach(d => observer.observe(d));
+</script>
+
+</body>
+</html>
