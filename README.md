@@ -16,4 +16,6 @@ Open `index.html` through any static web server (e.g. `python3 -m http.server`) 
 - `style.css` – UI styling
 - `main.js` – the 3D world (islands, road, buildings, bridges, theme park, beach) and interactions
 
+The 3D letters use the Bangers typeface (SIL Open Font License, see `fonts/OFL.txt`).
+
 Based on the Marketingland concept by The Proper Marketing Club (2019).

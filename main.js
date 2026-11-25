@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import { FontLoader } from 'three/addons/loaders/FontLoader.js';
+import { Font } from 'three/addons/loaders/FontLoader.js';
+import { TTFLoader } from 'three/addons/loaders/TTFLoader.js';
 import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
 
 // Labels are painted onto canvases, so wait (briefly) for the display font.
@@ -9,9 +10,10 @@ await Promise.race([
   new Promise((r) => setTimeout(r, 2500)),
 ]).catch(() => {});
 
-// Typeface for the standing 3D letters (Hollywood-sign style)
-const letterFont = await new FontLoader()
-  .loadAsync('https://cdn.jsdelivr.net/npm/three@0.160.0/examples/fonts/helvetiker_bold.typeface.json')
+// Typeface for the standing 3D letters: the same comic display face (Bangers) as the painted labels
+const letterFont = await new TTFLoader()
+  .loadAsync('fonts/Bangers-Regular.ttf')
+  .then((json) => new Font(json))
   .catch(() => null);
 
 /* ------------------------------------------------------------------ *
@@ -380,16 +382,19 @@ function flatLabel(text, x, z, width, { rot = 0, y = null, color = '#1d5317', op
   return mesh;
 }
 
-const letterMat = new THREE.MeshStandardMaterial({ color: '#ffffff', roughness: 0.5, emissive: '#ffffff', emissiveIntensity: 0.35 });
 const letterPostMat = new THREE.MeshStandardMaterial({ color: '#4a4a52', roughness: 0.8 });
 const letterSpots = [];
-function hollywood(text, cx, cz, { width, maxHeight = 3, rotY = 0, color = null, water = false, tilt = -0.12, seed = 1 }) {
+// Letter colours taken from the map: dark green on the land, ochre on the hill, brown on the beach
+const LETTER_GREEN = '#1f5a17';
+function hollywood(text, cx, cz, { width, maxHeight = 3, rotY = 0, color = LETTER_GREEN, water = false, tilt = -0.12, seed = 1 }) {
   const res = letterFont.data.resolution;
   const adv = (ch) => (letterFont.data.glyphs[ch] || letterFont.data.glyphs['O']).ha / res;
   const gap = 0.14;
   const natural = [...text].reduce((sum, ch) => sum + adv(ch) + gap, 0) - gap;
   const size = Math.min(maxHeight, width / natural);
-  const mat = color ? new THREE.MeshStandardMaterial({ color, roughness: 0.45, emissive: color, emissiveIntensity: 0.25 }) : letterMat;
+  const faceMat = new THREE.MeshStandardMaterial({ color, roughness: 0.6, emissive: color, emissiveIntensity: 0.35 });
+  const sideMat = new THREE.MeshStandardMaterial({ color: new THREE.Color(color).multiplyScalar(0.45), roughness: 0.8 });
+  const mat = [faceMat, sideMat];
   const group = new THREE.Group();
   group.position.set(cx, 0, cz);
   group.rotation.y = rotY;
@@ -427,13 +432,14 @@ function hollywood(text, cx, cz, { width, maxHeight = 3, rotY = 0, color = null,
   return group;
 }
 
+// The three phases stay painted on the water
+flatLabel('DIAGNOSIS', 14, -76, 40, { rot: 0.08, y: 0.12, color: '#2f7fb4', opacity: 0.9 });
+flatLabel('STRATEGY', 15, -33.5, 34, { rot: -0.12, y: 0.12, color: '#2f7fb4', opacity: 0.9 });
+flatLabel('EXECUTION', 13, 9.5, 40, { rot: -0.1, y: 0.12, color: '#2f7fb4', opacity: 0.9 });
+
 if (letterFont) {
-  // The three phases stand in the water, in blue
-  hollywood('DIAGNOSIS', 14, -75, { width: 34, maxHeight: 5.5, rotY: 0.05, color: '#2f86c0', water: true, tilt: 0, seed: 11 });
-  hollywood('STRATEGY', 16, -33.5, { width: 26, maxHeight: 4.5, rotY: -0.1, color: '#2f86c0', water: true, tilt: 0, seed: 12 });
-  hollywood('EXECUTION', 14, 9, { width: 32, maxHeight: 5, rotY: -0.08, color: '#2f86c0', water: true, tilt: 0, seed: 13 });
-  // Area names stand on the land in white
-  hollywood('MARKET ORIENTATION', -9.5, -55.2, { width: 16, maxHeight: 2.2, rotY: 0.05, seed: 1 });
+  // Area names stand upright on the land
+  hollywood('MARKET ORIENTATION', -9.5, -55.2, { width: 16, maxHeight: 2.4, rotY: 0.05, seed: 1, color: '#e1cf62' });
   hollywood('MARKET RESEARCH', 20, -45.5, { width: 24, maxHeight: 3, rotY: -0.06, seed: 2 });
   hollywood('MARKET SEGMENTATION', -29.5, -30.3, { width: 19.5, maxHeight: 3, rotY: 0.06, seed: 3 });
   hollywood('TARGETING', -12, -11.5, { width: 11, maxHeight: 2.8, rotY: 0.05, seed: 4 });
@@ -442,12 +448,9 @@ if (letterFont) {
   hollywood('PLACE', -42, 28.5, { width: 9, maxHeight: 2.8, rotY: 0.2, seed: 7 });
   hollywood('PRODUCT', -3, 42, { width: 18, maxHeight: 3.4, rotY: 0.03, seed: 8 });
   hollywood('PROMOTION', 29, 43.3, { width: 13, maxHeight: 3, rotY: -0.18, seed: 9 });
-  hollywood('BRAND BEACH', -10, 64.5, { width: 24, maxHeight: 3, rotY: -0.05, seed: 10 });
+  hollywood('BRAND BEACH', -10, 64.5, { width: 24, maxHeight: 3.2, rotY: -0.05, seed: 10, color: '#8a5a20' });
 } else {
   // Fallback if the typeface could not load: painted labels
-  flatLabel('DIAGNOSIS', 14, -76, 40, { rot: 0.08, y: 0.12, color: '#2f7fb4', opacity: 0.9 });
-  flatLabel('STRATEGY', 15, -33.5, 34, { rot: -0.12, y: 0.12, color: '#2f7fb4', opacity: 0.9 });
-  flatLabel('EXECUTION', 13, 9.5, 40, { rot: -0.1, y: 0.12, color: '#2f7fb4', opacity: 0.9 });
   flatLabel('MARKET ORIENTATION', -8, -57, 17, { rot: 0.12, color: '#e1cf62' });
   flatLabel('MARKET RESEARCH', 20, -45.5, 22, { rot: -0.1 });
   flatLabel('MARKET\nSEGMENTATION', -30, -31.5, 15, { rot: 0.1 });
