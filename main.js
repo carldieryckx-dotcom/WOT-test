@@ -12,7 +12,7 @@ await Promise.race([
 
 // Typeface for the standing 3D letters: the same comic display face (Bangers) as the painted labels
 const letterFont = await new TTFLoader()
-  .loadAsync('fonts/Bangers-Regular.ttf')
+  .loadAsync('fonts/Bangers-Regular.ttf?v=4')
   .then((json) => new Font(json))
   .catch(() => null);
 
