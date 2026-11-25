@@ -1,0 +1,162 @@
+:root {
+  --ink: #1f2a44;
+  --panel: rgba(255, 255, 255, 0.92);
+  --panel-border: rgba(31, 42, 68, 0.12);
+  --blue: #2f86c0;
+  --diagnosis: #2f86c0;
+  --strategy: #7b4fc4;
+  --execution: #e07a1f;
+  --brand: #c99a10;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  background: #bfe4fb;
+  color: var(--ink);
+  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+}
+
+#scene { position: fixed; inset: 0; width: 100%; height: 100%; display: block; touch-action: none; }
+
+button {
+  font: inherit;
+  font-weight: 600;
+  font-size: 14px;
+  border: 1px solid var(--panel-border);
+  background: #fff;
+  color: var(--ink);
+  border-radius: 999px;
+  padding: 8px 14px;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  transition: transform 0.12s, background 0.12s;
+}
+button:hover { transform: translateY(-1px); background: #f3f8fc; }
+button.primary { background: var(--blue); color: #fff; border-color: transparent; }
+button.primary:hover { background: #2775aa; }
+button.active { background: var(--ink); color: #fff; }
+
+/* Loader */
+#loader {
+  position: fixed; inset: 0; z-index: 50;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  background: linear-gradient(#9fd6f7, #d9f0ff);
+  transition: opacity 0.6s;
+}
+#loader.done { opacity: 0; pointer-events: none; }
+.loader-title { font-family: Bangers, Impact, sans-serif; font-size: clamp(44px, 10vw, 110px); color: var(--blue); letter-spacing: 2px; transform: skewX(-6deg); }
+.loader-sub { margin-top: 8px; font-weight: 600; opacity: 0.7; }
+
+/* Top bar */
+#topbar {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 10;
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  padding: 12px 16px;
+  pointer-events: none;
+}
+#topbar > * { pointer-events: auto; }
+#topbar h1 {
+  margin: 0;
+  font-family: Bangers, Impact, sans-serif;
+  font-weight: 400;
+  font-size: clamp(30px, 5vw, 54px);
+  letter-spacing: 2px;
+  color: var(--blue);
+  transform: skewX(-6deg);
+  text-shadow: 0 2px 0 #fff, 0 4px 12px rgba(255, 255, 255, 0.6);
+}
+#topbar nav { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+
+/* Legend */
+#legend {
+  position: fixed; left: 16px; top: 84px; z-index: 10;
+  width: 230px;
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
+  border-radius: 14px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  backdrop-filter: blur(6px);
+  overflow: hidden;
+}
+#legend-toggle {
+  width: 100%; border: 0; border-radius: 0; box-shadow: none; background: transparent;
+  text-align: left; padding: 10px 14px; font-weight: 800; font-size: 13px; text-transform: uppercase; letter-spacing: 0.06em;
+}
+#legend-toggle:hover { transform: none; }
+#legend-toggle::after { content: "▾"; float: right; }
+#legend.collapsed #legend-toggle::after { content: "▸"; }
+#legend.collapsed #legend-body { display: none; }
+#legend-body { padding: 0 8px 10px; max-height: calc(100vh - 160px); overflow-y: auto; }
+.phase-title { font-size: 11px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; margin: 10px 6px 4px; }
+.stop-btn {
+  display: flex; align-items: center; gap: 8px; width: 100%;
+  border: 0; box-shadow: none; background: transparent; border-radius: 8px;
+  padding: 6px 6px; font-size: 14px; text-align: left;
+}
+.stop-btn:hover { transform: none; background: rgba(47, 134, 192, 0.1); }
+.stop-btn.current { background: rgba(31, 42, 68, 0.08); }
+.stop-num {
+  flex: none; width: 22px; height: 22px; border-radius: 50%;
+  display: inline-flex; align-items: center; justify-content: center;
+  color: #fff; font-size: 12px; font-weight: 800;
+}
+
+/* Info card */
+#info {
+  position: fixed; right: 16px; bottom: 44px; z-index: 10;
+  width: min(380px, calc(100vw - 32px));
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
+  border-radius: 16px;
+  padding: 18px 20px 14px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.16);
+  backdrop-filter: blur(6px);
+}
+#info-close { position: absolute; right: 10px; top: 10px; width: 30px; height: 30px; padding: 0; font-size: 18px; line-height: 1; }
+#info-phase { font-size: 11px; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; }
+#info-title { margin: 4px 0 8px; font-family: Bangers, Impact, sans-serif; font-weight: 400; font-size: 34px; letter-spacing: 1px; line-height: 1; }
+#info-desc { margin: 0 0 8px; font-size: 14px; line-height: 1.5; }
+#info-points { margin: 0 0 12px; padding-left: 18px; font-size: 13.5px; line-height: 1.5; }
+#info-points li { margin-bottom: 3px; }
+#info-nav { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+#info-count { font-size: 12px; opacity: 0.6; font-weight: 600; }
+
+/* Drive HUD */
+#drive-hud {
+  position: fixed; left: 50%; bottom: 44px; transform: translateX(-50%); z-index: 10;
+  background: var(--panel); border: 1px solid var(--panel-border); border-radius: 14px;
+  padding: 12px 16px; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.14); text-align: center;
+  max-width: calc(100vw - 32px);
+}
+#drive-now { font-family: Bangers, Impact, sans-serif; font-size: 26px; letter-spacing: 1px; margin-bottom: 8px; }
+.drive-buttons { display: flex; gap: 8px; justify-content: center; }
+
+#tooltip {
+  position: fixed; z-index: 20; pointer-events: none;
+  background: var(--ink); color: #fff; font-size: 13px; font-weight: 600;
+  padding: 5px 10px; border-radius: 8px; transform: translate(12px, 12px);
+}
+
+#hint {
+  position: fixed; left: 50%; bottom: 14px; transform: translateX(-50%); z-index: 5;
+  font-size: 12px; font-weight: 600; color: var(--ink); opacity: 0.75;
+  background: rgba(255, 255, 255, 0.6); padding: 4px 12px; border-radius: 999px; white-space: nowrap;
+}
+#credit { position: fixed; right: 12px; bottom: 12px; z-index: 5; font-size: 11px; opacity: 0.6; }
+
+[hidden] { display: none !important; }
+
+@media (max-width: 760px) {
+  #topbar { flex-direction: column; align-items: flex-start; padding: 10px 16px; gap: 6px; }
+  #topbar nav { justify-content: flex-start; }
+  #topbar nav button { padding: 6px 10px; font-size: 13px; }
+  #legend { top: auto; bottom: 44px; left: 16px; width: 200px; }
+  #legend:not(.collapsed) #legend-body { max-height: 40vh; }
+  #info { left: 16px; right: 16px; width: auto; bottom: 44px; max-height: 55vh; overflow-y: auto; }
+  #hint { display: none; }
+  #credit { left: 16px; right: auto; }
+}
