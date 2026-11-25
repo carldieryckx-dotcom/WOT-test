@@ -12,7 +12,7 @@ await Promise.race([
 
 // Typeface for the standing 3D letters: the same comic display face (Bangers) as the painted labels
 const letterFont = await new TTFLoader()
-  .loadAsync('fonts/Bangers-Regular.ttf?v=4')
+  .loadAsync('fonts/Bangers-Regular.ttf?v=5')
   .then((json) => new Font(json))
   .catch(() => null);
 
@@ -55,7 +55,7 @@ const STOPS = [
     ],
   },
   {
-    id: 'targeting', name: 'Targeting', phase: 'strategy', pos: [-11, -15],
+    id: 'targeting', name: 'Targeting', phase: 'strategy', pos: [-15, -14],
     desc: 'Choose which segments you will serve — and, just as importantly, which you will ignore.',
     points: [
       'Weigh segment attractiveness against your ability to win there.',
@@ -310,8 +310,10 @@ island({ cx: 12, cz: -55, rx: 33, rz: 14, top: 4.5, seed: 1.2 });
 island({ cx: -8, cz: -59, rx: 10.5, rz: 6.8, top: 7.5, seed: 4.1, color: '#2f6a22', side: new THREE.MeshStandardMaterial({ color: '#244d18' }), bevel: 1.6, shallow: false });
 // Segmentation
 island({ cx: -27, cz: -35, rx: 16, rz: 10, top: 3.6, seed: 2.7 });
-// Targeting + Positioning
-island({ cx: 10, cz: -12, rx: 33, rz: 14, top: 3.0, seed: 5.3 });
+// Targeting (its own little island, as on the map)
+island({ cx: -15, cz: -14, rx: 8, rz: 7.5, top: 3.3, seed: 8.2 });
+// Positioning
+island({ cx: 20, cz: -11, rx: 23, rz: 14, top: 3.0, seed: 5.3 });
 // Price lobe
 island({ cx: -36, cz: 14, rx: 14.5, rz: 16, top: 2.6, seed: 0.4 });
 // Execution main island
@@ -330,8 +332,8 @@ const groundY = (x, z) => groundHit(x, z) ?? 0;
 
 const ROUTE = [
   [-3, -60.5], [1, -57], [8, -55], [20, -55], [32, -55.5], [38.5, -52], [31, -50], [18, -50], [6, -49.5], [-4, -47.5],
-  [-13, -44], [-20, -39], [-17, -31], [-10, -25.5], [-2, -23], [8, -15], [18, -16.5], [28, -15], [31, -10], [24, -8.5],
-  [10, -9], [-3, -8.5], [-13, -5], [-21, 0], [-28, 5], [-33, 12], [-34, 21], [-29, 30], [-19, 33], [-7, 33], [5, 31.5],
+  [-13, -44], [-20, -39], [-17, -31], [-15, -24], [-14, -18], [-10, -14.5], [-2, -14.5], [8, -15], [18, -16.5], [28, -15],
+  [31, -10], [24, -8], [10, -7.5], [0, -5.5], [-10, -2], [-21, 1], [-28, 5], [-33, 12], [-34, 21], [-29, 30], [-19, 33], [-7, 33], [5, 31.5],
   [15, 33], [21, 40], [18, 47.5], [9, 52.5], [1, 57],
 ];
 const ROAD_SAMPLES = 900;
@@ -442,8 +444,8 @@ if (letterFont) {
   hollywood('MARKET ORIENTATION', -9.5, -55.2, { width: 16, maxHeight: 2.4, rotY: 0.05, seed: 1, color: '#e1cf62' });
   hollywood('MARKET RESEARCH', 20, -45.5, { width: 24, maxHeight: 3, rotY: -0.06, seed: 2 });
   hollywood('MARKET SEGMENTATION', -29.5, -30.3, { width: 19.5, maxHeight: 3, rotY: 0.06, seed: 3 });
-  hollywood('TARGETING', -12, -11.5, { width: 11, maxHeight: 2.8, rotY: 0.05, seed: 4 });
-  hollywood('POSITIONING', 14, -2, { width: 24, maxHeight: 3.4, rotY: -0.05, seed: 5 });
+  hollywood('TARGETING', -15.5, -9.5, { width: 10, maxHeight: 2.8, rotY: 0.05, seed: 4 });
+  hollywood('POSITIONING', 17, -3.5, { width: 22, maxHeight: 3.4, rotY: -0.05, seed: 5 });
   hollywood('PRICE', -41, 17.5, { width: 8.5, maxHeight: 2.8, rotY: 0.25, seed: 6 });
   hollywood('PLACE', -42, 28.5, { width: 9, maxHeight: 2.8, rotY: 0.2, seed: 7 });
   hollywood('PRODUCT', -3, 42, { width: 18, maxHeight: 3.4, rotY: 0.03, seed: 8 });
@@ -647,19 +649,19 @@ building(-29, -42, { w: 4, d: 3.5, h: 9, color: '#a28d70' });
 building(-36, -35, { w: 3, d: 3, h: 5, color: '#7c7798' });
 bush(-20, -42); bush(-40, -36, 0.8);
 
-building(-4, -17, { w: 5, d: 4, h: 11, color: '#807b9c', roof: 'flat' });
-building(1.5, -13, { w: 3, d: 3, h: 7, color: '#958fb0' });
-bush(-20, -16); bush(-6, -6);
+building(-19, -17, { w: 4, d: 3.5, h: 10, color: '#807b9c', roof: 'flat' });
+building(-20.5, -12.5, { w: 3, d: 3, h: 6, color: '#958fb0' });
+bush(-9, -19, 0.8);
 
-building(4, -21, { w: 4.5, d: 4, h: 7, color: '#b39b7c', roof: 'red' });
-sign('Customer', 7, -17.5, { width: 4.8 });
+building(6, -19.5, { w: 4.5, d: 4, h: 7, color: '#b39b7c', roof: 'red' });
+sign('Customer', 9, -17.5, { width: 4.8 });
 building(32, -22, { w: 4.5, d: 3.5, h: 5, color: '#c9b49a', roof: 'gable' });
-building(37, -21, { w: 3.5, d: 3.5, h: 6, color: '#bca88f', roof: 'gable' });
+building(37, -19, { w: 3.5, d: 3.5, h: 6, color: '#bca88f', roof: 'gable' });
 sign('Company', 34, -17.5, { width: 4.6 });
 building(37, -7, { w: 4, d: 3.5, h: 4.5, color: '#9590ad', roof: 'flat' });
 building(41, -9, { w: 3, d: 3, h: 4, color: '#c2ab90', roof: 'gable' });
 sign('Competition', 36, -3.5, { width: 5.2 });
-bush(22, -21); bush(12, -24, 0.9); pine(26, -24, 1.1);
+bush(22, -21); bush(13, -22, 0.9); pine(26, -22.5, 1.1);
 
 /* --- Execution --- */
 // Price: tall towers and a lattice tower
