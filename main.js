@@ -1,11 +1,18 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { FontLoader } from 'three/addons/loaders/FontLoader.js';
+import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
 
 // Labels are painted onto canvases, so wait (briefly) for the display font.
 await Promise.race([
   Promise.all([document.fonts.load('100px Bangers'), document.fonts.load('600 40px Inter')]),
   new Promise((r) => setTimeout(r, 2500)),
 ]).catch(() => {});
+
+// Typeface for the standing 3D letters (Hollywood-sign style)
+const letterFont = await new FontLoader()
+  .loadAsync('https://cdn.jsdelivr.net/npm/three@0.160.0/examples/fonts/helvetiker_bold.typeface.json')
+  .catch(() => null);
 
 /* ------------------------------------------------------------------ *
  *  Content: the stops of Marketingland, in the "proper" order
@@ -46,7 +53,7 @@ const STOPS = [
     ],
   },
   {
-    id: 'targeting', name: 'Targeting', phase: 'strategy', pos: [-11, -19],
+    id: 'targeting', name: 'Targeting', phase: 'strategy', pos: [-11, -15],
     desc: 'Choose which segments you will serve — and, just as importantly, which you will ignore.',
     points: [
       'Weigh segment attractiveness against your ability to win there.',
@@ -319,6 +326,42 @@ function groundHit(x, z) {
 }
 const groundY = (x, z) => groundHit(x, z) ?? 0;
 
+const ROUTE = [
+  [-3, -60.5], [1, -57], [8, -55], [20, -55], [32, -55.5], [38.5, -52], [31, -50], [18, -50], [6, -49.5], [-4, -47.5],
+  [-13, -44], [-20, -39], [-17, -31], [-10, -25.5], [-2, -23], [8, -15], [18, -16.5], [28, -15], [31, -10], [24, -8.5],
+  [10, -9], [-3, -8.5], [-13, -5], [-21, 0], [-28, 5], [-33, 12], [-34, 21], [-29, 30], [-19, 33], [-7, 33], [5, 31.5],
+  [15, 33], [21, 40], [18, 47.5], [9, 52.5], [1, 57],
+];
+const ROAD_SAMPLES = 900;
+const roadCurve = new THREE.CatmullRomCurve3(ROUTE.map(([x, z]) => new THREE.Vector3(x, 0, z)), false, 'centripetal');
+const roadPts = roadCurve.getSpacedPoints(ROAD_SAMPLES);
+const roadLen = roadCurve.getLength();
+const ROAD_HALF = 0.95;
+
+/* Keep things off the road: distance to the road centre line, and a nudge to clear it */
+function roadDist(x, z) {
+  let best = Infinity, bp = null;
+  for (let i = 0; i < roadPts.length; i += 2) {
+    const p = roadPts[i];
+    const d = (p.x - x) ** 2 + (p.z - z) ** 2;
+    if (d < best) { best = d; bp = p; }
+  }
+  return { d: Math.sqrt(best), p: bp };
+}
+const obstacles = [];
+function clearSpot(x, z, r, margin = 0.7, name = '') {
+  const need = r + ROAD_HALF + margin;
+  for (let it = 0; it < 60; it++) {
+    const { d, p } = roadDist(x, z);
+    if (d >= need) break;
+    const dx = x - p.x, dz = z - p.z, l = Math.hypot(dx, dz) || 1;
+    x += (dx / l) * (need - d + 0.1);
+    z += (dz / l) * (need - d + 0.1);
+  }
+  obstacles.push({ x, z, r, name });
+  return [x, z];
+}
+
 /* ------------------------------------------------------------------ *
  *  Labels painted on the ground / water
  * ------------------------------------------------------------------ */
@@ -337,22 +380,85 @@ function flatLabel(text, x, z, width, { rot = 0, y = null, color = '#1d5317', op
   return mesh;
 }
 
-// Water labels (the three phases)
-flatLabel('DIAGNOSIS', 14, -76, 40, { rot: 0.08, y: 0.12, color: '#2f7fb4', opacity: 0.9 });
-flatLabel('STRATEGY', 15, -33.5, 34, { rot: -0.12, y: 0.12, color: '#2f7fb4', opacity: 0.9 });
-flatLabel('EXECUTION', 13, 9.5, 40, { rot: -0.1, y: 0.12, color: '#2f7fb4', opacity: 0.9 });
+const letterMat = new THREE.MeshStandardMaterial({ color: '#ffffff', roughness: 0.5, emissive: '#ffffff', emissiveIntensity: 0.35 });
+const letterPostMat = new THREE.MeshStandardMaterial({ color: '#4a4a52', roughness: 0.8 });
+const letterSpots = [];
+function hollywood(text, cx, cz, { width, maxHeight = 3, rotY = 0, color = null, water = false, tilt = -0.12, seed = 1 }) {
+  const res = letterFont.data.resolution;
+  const adv = (ch) => (letterFont.data.glyphs[ch] || letterFont.data.glyphs['O']).ha / res;
+  const gap = 0.14;
+  const natural = [...text].reduce((sum, ch) => sum + adv(ch) + gap, 0) - gap;
+  const size = Math.min(maxHeight, width / natural);
+  const mat = color ? new THREE.MeshStandardMaterial({ color, roughness: 0.45, emissive: color, emissiveIntensity: 0.25 }) : letterMat;
+  const group = new THREE.Group();
+  group.position.set(cx, 0, cz);
+  group.rotation.y = rotY;
+  scene.add(group);
+  group.updateMatrixWorld();
+  const r = mulberry32(seed);
+  let x = (-natural * size) / 2;
+  for (const ch of text) {
+    const a = adv(ch) * size;
+    if (ch !== ' ') {
+      const geo = new TextGeometry(ch, { font: letterFont, size, height: size * 0.22, curveSegments: 5, bevelEnabled: false });
+      geo.computeBoundingBox();
+      const bb = geo.boundingBox;
+      geo.translate(-(bb.min.x + bb.max.x) / 2, -bb.min.y, -size * 0.08);
+      const lx = x + a / 2;
+      const wp = new THREE.Vector3(lx, 0, 0).applyMatrix4(group.matrixWorld);
+      const gy = water ? -size * 0.08 : groundY(wp.x, wp.z) + size * 0.14;
+      const m = shadowed(new THREE.Mesh(geo, mat));
+      m.position.set(lx, gy + (r() - 0.5) * size * 0.08, 0);
+      m.rotation.set(tilt + (r() - 0.5) * 0.08, (r() - 0.5) * 0.06, (r() - 0.5) * 0.08);
+      group.add(m);
+      if (!water) {
+        // little scaffold posts behind each letter, like the real thing
+        for (const px of [-a * 0.22, a * 0.22]) {
+          const ph = size * 0.55;
+          const post = shadowed(new THREE.Mesh(new THREE.CylinderGeometry(size * 0.025, size * 0.025, ph, 5), letterPostMat));
+          post.position.set(lx + px, gy - size * 0.14 + ph / 2, -size * 0.16);
+          group.add(post);
+        }
+      }
+      letterSpots.push({ x: wp.x, z: wp.z, r: a / 2, text, drop: water ? 0 : Math.abs(groundY(wp.x, wp.z) - groundY(cx, cz)) });
+    }
+    x += a + gap * size;
+  }
+  return group;
+}
 
-// Area labels on land
-flatLabel('MARKET ORIENTATION', -8, -57, 17, { rot: 0.12, color: '#e1cf62' });
-flatLabel('MARKET RESEARCH', 20, -45.5, 22, { rot: -0.1 });
-flatLabel('MARKET\nSEGMENTATION', -30, -31.5, 15, { rot: 0.1 });
-flatLabel('TARGETING', -12, -18, 13, { rot: -0.3 });
-flatLabel('POSITIONING', 14, -2.8, 24, { rot: -0.12 });
-flatLabel('PRICE', -42, 15, 10, { rot: 0.35 });
-flatLabel('PLACE', -41, 28, 11, { rot: 0.3 });
-flatLabel('PRODUCT', -3, 42, 17, { rot: 0.05 });
-flatLabel('PROMOTION', 31, 45, 19, { rot: 0.32 });
-flatLabel('BRAND BEACH', -10, 63, 27, { rot: -0.08, color: '#8a5a20' });
+if (letterFont) {
+  // The three phases stand in the water, in blue
+  hollywood('DIAGNOSIS', 14, -75, { width: 34, maxHeight: 5.5, rotY: 0.05, color: '#2f86c0', water: true, tilt: 0, seed: 11 });
+  hollywood('STRATEGY', 16, -33.5, { width: 26, maxHeight: 4.5, rotY: -0.1, color: '#2f86c0', water: true, tilt: 0, seed: 12 });
+  hollywood('EXECUTION', 14, 9, { width: 32, maxHeight: 5, rotY: -0.08, color: '#2f86c0', water: true, tilt: 0, seed: 13 });
+  // Area names stand on the land in white
+  hollywood('MARKET ORIENTATION', -9.5, -55.2, { width: 16, maxHeight: 2.2, rotY: 0.05, seed: 1 });
+  hollywood('MARKET RESEARCH', 20, -45.5, { width: 24, maxHeight: 3, rotY: -0.06, seed: 2 });
+  hollywood('MARKET SEGMENTATION', -29.5, -30.3, { width: 19.5, maxHeight: 3, rotY: 0.06, seed: 3 });
+  hollywood('TARGETING', -12, -11.5, { width: 11, maxHeight: 2.8, rotY: 0.05, seed: 4 });
+  hollywood('POSITIONING', 14, -2, { width: 24, maxHeight: 3.4, rotY: -0.05, seed: 5 });
+  hollywood('PRICE', -41, 17.5, { width: 8.5, maxHeight: 2.8, rotY: 0.25, seed: 6 });
+  hollywood('PLACE', -42, 28.5, { width: 9, maxHeight: 2.8, rotY: 0.2, seed: 7 });
+  hollywood('PRODUCT', -3, 42, { width: 18, maxHeight: 3.4, rotY: 0.03, seed: 8 });
+  hollywood('PROMOTION', 29, 43.3, { width: 13, maxHeight: 3, rotY: -0.18, seed: 9 });
+  hollywood('BRAND BEACH', -10, 64.5, { width: 24, maxHeight: 3, rotY: -0.05, seed: 10 });
+} else {
+  // Fallback if the typeface could not load: painted labels
+  flatLabel('DIAGNOSIS', 14, -76, 40, { rot: 0.08, y: 0.12, color: '#2f7fb4', opacity: 0.9 });
+  flatLabel('STRATEGY', 15, -33.5, 34, { rot: -0.12, y: 0.12, color: '#2f7fb4', opacity: 0.9 });
+  flatLabel('EXECUTION', 13, 9.5, 40, { rot: -0.1, y: 0.12, color: '#2f7fb4', opacity: 0.9 });
+  flatLabel('MARKET ORIENTATION', -8, -57, 17, { rot: 0.12, color: '#e1cf62' });
+  flatLabel('MARKET RESEARCH', 20, -45.5, 22, { rot: -0.1 });
+  flatLabel('MARKET\nSEGMENTATION', -30, -31.5, 15, { rot: 0.1 });
+  flatLabel('TARGETING', -12, -18, 13, { rot: -0.3 });
+  flatLabel('POSITIONING', 14, -2.8, 24, { rot: -0.12 });
+  flatLabel('PRICE', -42, 15, 10, { rot: 0.35 });
+  flatLabel('PLACE', -41, 28, 11, { rot: 0.3 });
+  flatLabel('PRODUCT', -3, 42, 17, { rot: 0.05 });
+  flatLabel('PROMOTION', 31, 45, 19, { rot: 0.32 });
+  flatLabel('BRAND BEACH', -10, 63, 27, { rot: -0.08, color: '#8a5a20' });
+}
 
 /* ------------------------------------------------------------------ *
  *  Buildings, signs and props
@@ -385,6 +491,7 @@ function windowTexture(kind) {
 const WIN = [windowTexture(0), windowTexture(1), windowTexture(2)];
 
 function building(x, z, { w = 4, d = 4, h = 8, color = '#8d88ab', kind = 0, roof = null, roofColor = '#b8312f', rotY = 0 } = {}) {
+  [x, z] = clearSpot(x, z, Math.hypot(w, d) / 2, 0.7, 'building');
   const y0 = groundY(x, z);
   const g = new THREE.Group();
   const tex = WIN[kind].clone();
@@ -422,6 +529,7 @@ function building(x, z, { w = 4, d = 4, h = 8, color = '#8d88ab', kind = 0, roof
 }
 
 function roundTower(x, z, { r = 2.5, h = 7, color = '#9c9cb8' } = {}) {
+  [x, z] = clearSpot(x, z, r, 0.7, 'tower');
   const y0 = groundY(x, z);
   const tex = WIN[0].clone();
   tex.repeat.set(6, Math.round(h / 2));
@@ -436,6 +544,7 @@ function roundTower(x, z, { r = 2.5, h = 7, color = '#9c9cb8' } = {}) {
 
 const postMat = new THREE.MeshStandardMaterial({ color: '#6b6f75', metalness: 0.4, roughness: 0.5 });
 function sign(text, x, z, { width = 5, rotY = 0, height = 2.2 } = {}) {
+  [x, z] = clearSpot(x, z, width * 0.4, 0.3, 'sign');
   const y0 = groundY(x, z);
   const { tex, aspect } = textCanvas(text, { size: 90, color: '#ffffff', bg: '#16704a', border: '#ffffff', padX: 34, padY: 22, radius: 18 });
   const h = width / aspect;
@@ -460,6 +569,7 @@ const leafMat = new THREE.MeshStandardMaterial({ color: '#2f7d2a', roughness: 0.
 const darkLeafMat = new THREE.MeshStandardMaterial({ color: '#1f5a1f', roughness: 0.9 });
 const trunkMat = new THREE.MeshStandardMaterial({ color: '#6e4a26' });
 function pine(x, z, s = 1, dark = false) {
+  [x, z] = clearSpot(x, z, 0.8 * s, 0.3, 'plant');
   const y0 = groundY(x, z);
   const g = new THREE.Group();
   const trunk = shadowed(new THREE.Mesh(new THREE.CylinderGeometry(0.12 * s, 0.16 * s, 0.8 * s, 6), trunkMat));
@@ -474,6 +584,7 @@ function pine(x, z, s = 1, dark = false) {
   scene.add(g);
 }
 function bush(x, z, s = 1) {
+  [x, z] = clearSpot(x, z, 0.8 * s, 0.3, 'plant');
   const y0 = groundY(x, z);
   const m = shadowed(new THREE.Mesh(new THREE.IcosahedronGeometry(0.8 * s, 1), new THREE.MeshStandardMaterial({ color: '#4caf34', flatShading: true })));
   m.position.set(x, y0 + 0.5 * s, z);
@@ -482,6 +593,7 @@ function bush(x, z, s = 1) {
 }
 const palmLeafMat = new THREE.MeshStandardMaterial({ color: '#2e8b3a', side: THREE.DoubleSide, flatShading: true });
 function palm(x, z, s = 1, lean = 0.2) {
+  [x, z] = clearSpot(x, z, 0.8 * s, 0.3, 'plant');
   const y0 = groundY(x, z);
   const g = new THREE.Group();
   const h = 3.2 * s;
@@ -511,7 +623,7 @@ function palm(x, z, s = 1, lean = 0.2) {
 for (let i = 0; i < 26; i++) {
   const a = rand() * Math.PI * 2, r = Math.sqrt(rand());
   const x = -8 + Math.cos(a) * 8.5 * r, z = -60.5 + Math.sin(a) * 4.5 * r;
-  if (Math.abs(z + 57) < 1.4 && Math.abs(x + 8) < 8) continue; // keep label clear
+  if (z > -57.5) continue; // keep the letters on the hill clear
   pine(x, z, 0.9 + rand() * 0.5, true);
 }
 building(4, -63, { w: 5, d: 4, h: 6, color: '#8e8aa8', roof: 'flat' });
@@ -524,17 +636,16 @@ building(28, -66, { w: 3, d: 3, h: 10, color: '#8f8aa9', roof: 'spire' });
 sign('Ethnography', 6, -58.4, { width: 5.5 });
 sign('Qualitative\nresearch', 21, -58.8, { width: 4.8 });
 sign('Quantitative\nresearch', 34, -57, { width: 5 });
-bush(41, -55); bush(-2, -49); bush(30, -46, 0.8); pine(42, -60, 1.1);
+bush(41, -55); bush(-2, -49); pine(42, -60, 1.1);
 
 /* --- Strategy --- */
 building(-34, -40, { w: 4.5, d: 4, h: 7, color: '#857f9c', roof: 'flat' });
 building(-29, -42, { w: 4, d: 3.5, h: 9, color: '#a28d70' });
 building(-36, -35, { w: 3, d: 3, h: 5, color: '#7c7798' });
-bush(-20, -42); bush(-38, -30, 0.8);
+bush(-20, -42); bush(-40, -36, 0.8);
 
-building(-16, -12, { w: 3.5, d: 3.5, h: 6, color: '#8a85a6' });
-building(-6, -15, { w: 5, d: 4, h: 11, color: '#807b9c', roof: 'flat' });
-building(-1, -13.5, { w: 3, d: 3, h: 7, color: '#958fb0' });
+building(-4, -17, { w: 5, d: 4, h: 11, color: '#807b9c', roof: 'flat' });
+building(1.5, -13, { w: 3, d: 3, h: 7, color: '#958fb0' });
 bush(-20, -16); bush(-6, -6);
 
 building(4, -21, { w: 4.5, d: 4, h: 7, color: '#b39b7c', roof: 'red' });
@@ -553,10 +664,10 @@ building(-45, 6, { w: 4, d: 4, h: 13, color: '#5d86c8', kind: 2, roof: 'flat' })
 building(-40, 1.5, { w: 4.5, d: 4, h: 9, color: '#7c95c0', kind: 2 });
 building(-46, 13, { w: 4, d: 3.5, h: 7, color: '#6f7fa8', kind: 2 });
 building(-27, 22, { w: 4.5, d: 4, h: 14, color: '#827c9d', roof: 'spire' });
-building(-37, 22, { w: 5, d: 4, h: 10, color: '#8a6a55', roof: 'flat' });
 {
   // Lattice tower (a nod to the map's Paris-style tower)
-  const x = -27, z = 11, y0 = groundY(x, z);
+  const [x, z] = clearSpot(-27, 11, 2.4, 0.7, 'lattice');
+  const y0 = groundY(x, z);
   const mat = new THREE.MeshStandardMaterial({ color: '#a0522d', roughness: 0.6, metalness: 0.2 });
   const g = new THREE.Group();
   const H = 15;
@@ -582,7 +693,7 @@ building(-37, 22, { w: 5, d: 4, h: 10, color: '#8a6a55', roof: 'flat' });
 // Place: little market stalls
 const awningColors = ['#e74c3c', '#f1c40f', '#3498db', '#2ecc71', '#9b59b6'];
 for (let i = 0; i < 6; i++) {
-  const x = -47 + (i % 3) * 4, z = 33 + Math.floor(i / 3) * 4;
+  const [x, z] = clearSpot(-47 + (i % 3) * 4, 34 + Math.floor(i / 3) * 4, 1.7, 0.5, 'stall');
   const y0 = groundY(x, z);
   const base = shadowed(new THREE.Mesh(new THREE.BoxGeometry(2.6, 1.2, 1.8), new THREE.MeshStandardMaterial({ color: '#d9c4a0' })));
   base.position.set(x, y0 + 0.6, z);
@@ -621,7 +732,8 @@ building(39.5, 30, { w: 3.5, d: 3.5, h: 9, color: '#77738e' });
 }
 const ferris = new THREE.Group();
 {
-  const x = 44, z = 37, y0 = groundY(x, z);
+  const [x, z] = clearSpot(44, 37, 3, 0.7, 'ferris');
+  const y0 = groundY(x, z);
   const R = 6;
   const steel = new THREE.MeshStandardMaterial({ color: '#d8d8e0', metalness: 0.5, roughness: 0.4 });
   const wheel = new THREE.Group();
@@ -654,7 +766,8 @@ const ferris = new THREE.Group();
 }
 let coasterCurve;
 {
-  const cx = 26, cz = 34, y0 = groundY(cx, cz);
+  const [cx, cz] = clearSpot(27, 33, 8.2, 0.6, 'coaster');
+  const y0 = groundY(cx, cz);
   const pts = [
     [-6, 1.5, -2], [-2, 3, -4], [3, 6, -3], [6, 4, 0], [5, 1.5, 3], [1, 2.5, 4],
     [-1, 6, 3], [-0.5, 8, 1.5], [0.5, 6, 0], [-1, 3.5, 1.5], [-5, 2, 3], [-8, 3, 1],
@@ -678,8 +791,9 @@ scene.add(coasterCar);
 const beachPeople = [];
 {
   const umbrellaColors = ['#e74c3c', '#27ae60', '#2980b9', '#f39c12'];
-  const spots = [[-24, 58], [-14, 56], [-3, 57.5], [6, 59], [-20, 64], [0, 64]];
-  spots.forEach(([x, z], i) => {
+  const spots = [[-26, 59], [-17, 56.5], [-7, 56], [7, 60], [-28, 62.5], [3, 61.5]];
+  spots.forEach(([sx, sz], i) => {
+    const [x, z] = clearSpot(sx, sz, 2, 0.3, 'umbrella');
     const y0 = groundY(x, z);
     const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, 2.4, 5), postMat);
     pole.position.set(x, y0 + 1.2, z);
@@ -693,7 +807,7 @@ const beachPeople = [];
   });
   const skin = ['#f1c27d', '#c68642', '#8d5524', '#e0ac69'];
   for (let i = 0; i < 14; i++) {
-    const x = -28 + rand() * 36, z = 55 + rand() * 9;
+    const [x, z] = clearSpot(-28 + rand() * 36, 54.5 + rand() * 7, 0.4, 0.3, 'person');
     const y0 = groundY(x, z);
     if (y0 < 0.5) continue;
     const p = new THREE.Group();
@@ -708,7 +822,7 @@ const beachPeople = [];
     beachPeople.push(p);
   }
   palm(-30, 60, 1.1, 0.25); palm(10, 56, 1, -0.2); palm(14, 61, 0.9, -0.3); palm(-26, 64, 0.8, 0.15);
-  palm(19, 49, 1, -0.2); palm(23, 50.5, 0.8, 0.25); palm(-16, 45.5, 0.9, 0.2);
+  palm(19, 49, 1, -0.2); palm(-16, 45.5, 0.9, 0.2);
   // beach ball
   const ball = shadowed(new THREE.Mesh(new THREE.SphereGeometry(0.35, 12, 10), new THREE.MeshStandardMaterial({ color: '#ff6b6b' })));
   ball.position.set(-9, groundY(-9, 59) + 0.35, 59);
@@ -728,16 +842,6 @@ const windsurfer = new THREE.Group();
 /* ------------------------------------------------------------------ *
  *  The road
  * ------------------------------------------------------------------ */
-const ROUTE = [
-  [-6, -57.5], [-1, -55.5], [8, -55], [20, -55], [32, -55.5], [38.5, -52], [31, -50], [18, -50], [6, -49.5], [-4, -47.5],
-  [-13, -44], [-20, -39], [-17, -31], [-10, -25.5], [-2, -23], [8, -15], [18, -16.5], [28, -15], [31, -10], [24, -8.5],
-  [10, -9], [-3, -8.5], [-13, -5], [-21, 0], [-28, 5], [-33, 12], [-34, 21], [-29, 30], [-19, 33], [-7, 33], [5, 31.5],
-  [15, 33], [21, 40], [18, 47.5], [9, 52.5], [1, 57],
-];
-const ROAD_SAMPLES = 900;
-const roadCurve = new THREE.CatmullRomCurve3(ROUTE.map(([x, z]) => new THREE.Vector3(x, 0, z)), false, 'centripetal');
-const roadPts = roadCurve.getSpacedPoints(ROAD_SAMPLES);
-const roadLen = roadCurve.getLength();
 {
   // Heights from terrain, then fill water gaps with bridges
   const raw = roadPts.map((p) => groundHit(p.x, p.z));
@@ -1251,6 +1355,14 @@ function animate() {
   renderer.render(scene, camera);
   requestAnimationFrame(animate);
 }
+
+// Layout self-check: warn (console only) if anything ended up on the road or in the sea
+obstacles.forEach((o) => { if (groundHit(o.x, o.z) === null) console.warn('off-island', o.name, o.x.toFixed(1), o.z.toFixed(1)); });
+letterSpots.forEach((l) => {
+  if (l.drop > 0.4) console.warn('letter off the edge', l.text, l.x.toFixed(1), l.z.toFixed(1));
+  if (roadDist(l.x, l.z).d < l.r + ROAD_HALF + 0.2) console.warn('letter on road', l.text, l.x.toFixed(1), l.z.toFixed(1));
+  obstacles.forEach((o) => { if (o.name !== 'person' && Math.hypot(o.x - l.x, o.z - l.z) < o.r + l.r) console.warn('letter hits', o.name, l.text, o.x.toFixed(1), o.z.toFixed(1)); });
+});
 
 animate();
 $('loader').classList.add('done');
