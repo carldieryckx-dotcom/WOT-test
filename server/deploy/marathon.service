@@ -1,0 +1,40 @@
+# /etc/systemd/system/marathon.service
+# Installeren:
+#   sudo cp /var/www/mijnsite/server/deploy/marathon.service /etc/systemd/system/
+#   sudo systemctl daemon-reload && sudo systemctl enable --now marathon
+[Unit]
+Description=Marathonschema API (carldrx.io/api)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=marathon
+Group=marathon
+WorkingDirectory=/var/www/mijnsite/server
+EnvironmentFile=/etc/marathon.env
+Environment=NODE_ENV=production
+ExecStart=/usr/bin/node --disable-warning=ExperimentalWarning src/index.js
+Restart=on-failure
+RestartSec=3
+
+# /var/lib/marathon wordt door systemd aangemaakt, eigenaar marathon, mode 0700
+StateDirectory=marathon
+StateDirectoryMode=0700
+
+# Afscherming
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+PrivateDevices=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
+RestrictSUIDSGID=true
+LockPersonality=true
+UMask=0077
+
+[Install]
+WantedBy=multi-user.target

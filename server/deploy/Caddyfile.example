@@ -1,0 +1,30 @@
+# Voorbeeld voor de site-blok van carldrx.io in /etc/caddy/Caddyfile.
+# Pas aan aan wat er al staat; herlaad met: sudo systemctl reload caddy
+carldrx.io {
+	root * /var/www/mijnsite
+
+	# API -> Node-service (luistert enkel op 127.0.0.1)
+	handle /api* {
+		reverse_proxy 127.0.0.1:8788
+	}
+
+	# Marathonpagina: statisch, maar pas na controle van de Access-login door de API
+	# (tweede lijn achter Cloudflare Access; faalt dicht als de service niet draait).
+	handle /marathon* {
+		forward_auth 127.0.0.1:8788 {
+			uri /api/auth-check
+		}
+		header Cache-Control "private, no-store"
+		header X-Robots-Tag "noindex"
+		file_server {
+			hide .git .github .gitignore server lib functions *.md
+		}
+	}
+
+	# Publieke site (Marketingland)
+	handle {
+		file_server {
+			hide .git .github .gitignore server lib functions *.md
+		}
+	}
+}
