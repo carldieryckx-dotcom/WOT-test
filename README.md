@@ -22,4 +22,4 @@ Based on the Marketingland concept by The Proper Marketing Club (2019).
 
 ## Marathonschema
 
-Privé trainingsschema op `/marathon` met Strava-koppeling: zie [MARATHON.md](MARATHON.md).
+Privé trainingsschema op `/marathon` met een kleine Node-API in `server/` (handmatige invoer en GPX-upload): zie [MARATHON.md](MARATHON.md).
