@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Marathonschema Kortrijk</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css?v=1" />
+</head>
+<body>
+  <header class="hero">
+    <div class="wrap hero-inner">
+      <div>
+        <p class="eyebrow" id="race-date"></p>
+        <h1>Marathon Kortrijk</h1>
+        <p class="sub" id="goal-line"></p>
+      </div>
+      <div class="countdown" aria-live="polite">
+        <span class="countdown-num" id="countdown-days">–</span>
+        <span class="countdown-label">dagen te gaan</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <div id="banner" class="banner" hidden></div>
+
+    <section class="strava card" aria-labelledby="strava-title">
+      <div class="strava-info">
+        <h2 id="strava-title">Strava</h2>
+        <p id="strava-status">Status laden…</p>
+      </div>
+      <div class="strava-actions">
+        <a id="strava-connect" class="btn btn-strava" href="/api/strava/connect" hidden>Koppel Strava</a>
+        <button id="strava-sync" class="btn" hidden>Synchroniseer</button>
+        <button id="strava-disconnect" class="btn btn-ghost" hidden>Ontkoppel</button>
+      </div>
+    </section>
+
+    <section class="today-grid">
+      <article class="card today" id="today-card" aria-labelledby="today-title">
+        <h2 id="today-title">Vandaag</h2>
+        <div id="today-body"></div>
+      </article>
+      <div class="stats" id="stats"></div>
+    </section>
+
+    <section class="card" aria-labelledby="chart-title">
+      <div class="section-head">
+        <h2 id="chart-title">Kilometers per week</h2>
+        <div class="legend" aria-hidden="true">
+          <span><i class="sw sw-plan"></i>Gepland</span>
+          <span><i class="sw sw-done"></i>Gelopen</span>
+        </div>
+      </div>
+      <div class="chart" id="chart"></div>
+      <div class="chart-tip" id="chart-tip" hidden></div>
+    </section>
+
+    <section aria-labelledby="weeks-title">
+      <div class="section-head">
+        <h2 id="weeks-title">Schema</h2>
+        <button class="btn btn-ghost btn-small" id="jump-today">Naar deze week</button>
+      </div>
+      <div id="weeks"></div>
+    </section>
+
+    <section class="card" aria-labelledby="runs-title">
+      <h2 id="runs-title">Laatste loopjes</h2>
+      <div id="runs"></div>
+    </section>
+
+    <section class="card" aria-labelledby="settings-title">
+      <details id="settings-details">
+        <summary><h2 id="settings-title">Instellingen van je schema</h2></summary>
+        <form id="settings-form" class="settings">
+          <label>Doeltijd <input name="goalTime" placeholder="3:59:00" pattern="\d{1,2}:\d{2}(:\d{2})?" required /></label>
+          <label>Loopjes per week
+            <select name="runsPerWeek"><option>3</option><option>4</option><option>5</option><option>6</option></select>
+          </label>
+          <label>Huidige km per week <input name="currentWeeklyKm" type="number" min="5" max="150" step="1" required /></label>
+          <label>Huidige langste loop (km) <input name="currentLongRunKm" type="number" min="4" max="35" step="0.5" required /></label>
+          <label>Piek km per week <input name="peakWeeklyKm" type="number" min="25" max="160" step="1" required /></label>
+          <label>Start van het schema <input name="startDate" type="date" required /></label>
+          <div class="settings-actions">
+            <button class="btn" type="submit">Opslaan</button>
+            <span id="settings-msg" role="status"></span>
+          </div>
+          <p class="hint">Het schema rekent alle tempo's en afstanden opnieuw uit. Het opbouwritme is maximaal ~10% per week, met elke 4e week een herstelweek en 3 weken taper.</p>
+        </form>
+      </details>
+    </section>
+  </main>
+
+  <footer class="wrap foot">Privé · enkel zichtbaar voor jou · gegevens van Strava</footer>
+
+  <script type="module" src="app.js?v=1"></script>
+</body>
+</html>

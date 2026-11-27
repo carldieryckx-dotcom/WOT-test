@@ -19,3 +19,7 @@ Open `index.html` through any static web server (e.g. `python3 -m http.server`) 
 The 3D letters use the Bangers typeface (SIL Open Font License, see `fonts/OFL.txt`).
 
 Based on the Marketingland concept by The Proper Marketing Club (2019).
+
+## Marathonschema
+
+Privé trainingsschema op `/marathon` met Strava-koppeling: zie [MARATHON.md](MARATHON.md).
