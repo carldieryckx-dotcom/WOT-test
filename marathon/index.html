@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="style.css?v=1" />
+  <link rel="stylesheet" href="style.css?v=2" />
 </head>
 <body>
   <header class="hero">
@@ -28,16 +28,28 @@
   <main class="wrap">
     <div id="banner" class="banner" hidden></div>
 
-    <section class="strava card" aria-labelledby="strava-title">
-      <div class="strava-info">
-        <h2 id="strava-title">Strava</h2>
-        <p id="strava-status">Status laden…</p>
-      </div>
-      <div class="strava-actions">
-        <a id="strava-connect" class="btn btn-strava" href="/api/strava/connect" hidden>Koppel Strava</a>
-        <button id="strava-sync" class="btn" hidden>Synchroniseer</button>
-        <button id="strava-disconnect" class="btn btn-ghost" hidden>Ontkoppel</button>
-      </div>
+    <section class="card" aria-labelledby="log-title">
+      <details id="log-details" class="fold">
+        <summary><h2 id="log-title">Loopje toevoegen</h2></summary>
+        <p class="hint" id="log-status">Status laden…</p>
+        <form id="run-form" class="settings">
+          <label>Datum <input name="date" type="date" required /></label>
+          <label>Afstand (km) <input name="km" type="number" min="0.1" max="100" step="0.01" required /></label>
+          <label>Duur <input name="duration" placeholder="u:mm:ss of mm:ss" pattern="(\d{1,2}:)?\d{1,2}:\d{2}" required /></label>
+          <label>Gem. hartslag <input name="avgHr" type="number" min="30" max="250" step="1" placeholder="optioneel" /></label>
+          <label class="wide">Notities <input name="notes" maxlength="1000" placeholder="optioneel" /></label>
+          <div class="settings-actions">
+            <button class="btn" type="submit">Toevoegen</button>
+          </div>
+        </form>
+        <form id="gpx-form" class="settings">
+          <label class="wide">Of upload een GPX-bestand <input name="file" type="file" accept=".gpx,application/gpx+xml" required /></label>
+          <div class="settings-actions">
+            <button class="btn" type="submit">GPX uploaden</button>
+          </div>
+        </form>
+        <p id="log-msg" role="status" class="hint"></p>
+      </details>
     </section>
 
     <section class="today-grid">
@@ -74,7 +86,7 @@
     </section>
 
     <section class="card" aria-labelledby="settings-title">
-      <details id="settings-details">
+      <details id="settings-details" class="fold">
         <summary><h2 id="settings-title">Instellingen van je schema</h2></summary>
         <form id="settings-form" class="settings">
           <label>Doeltijd <input name="goalTime" placeholder="3:59:00" pattern="\d{1,2}:\d{2}(:\d{2})?" required /></label>
@@ -95,8 +107,8 @@
     </section>
   </main>
 
-  <footer class="wrap foot">Privé · enkel zichtbaar voor jou · gegevens van Strava</footer>
+  <footer class="wrap foot">Privé · enkel zichtbaar voor jou</footer>
 
-  <script type="module" src="app.js?v=1"></script>
+  <script type="module" src="app.js?v=2"></script>
 </body>
 </html>

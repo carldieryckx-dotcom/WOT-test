@@ -23,7 +23,8 @@ const state = {
 };
 
 async function api(path, opts = {}) {
-  const res = await fetch(path, { credentials: 'same-origin', headers: { 'content-type': 'application/json' }, ...opts });
+  const headers = opts.body instanceof FormData ? {} : { 'content-type': 'application/json' };
+  const res = await fetch(path, { credentials: 'same-origin', headers, ...opts });
   const data = await res.json().catch(() => ({}));
   if (!res.ok) throw Object.assign(new Error(data.error || `Fout ${res.status}`), { status: res.status, data });
   return data;
@@ -60,15 +61,12 @@ async function loadMe() {
   }
 }
 
-async function loadRuns(refresh = false) {
-  if (!state.api || !state.me?.strava?.connected) return;
+async function loadRuns() {
+  if (!state.api) return;
   try {
-    const plan = buildPlan(state.settings);
-    const data = await api(`/api/strava/activities?after=${plan.weeks[0].start}${refresh ? '&refresh=1' : ''}`);
-    state.runs = data.runs;
-    state.fetchedAt = data.fetchedAt;
+    state.runs = (await api('/api/runs')).runs;
   } catch (e) {
-    banner(`Strava: ${e.message}`);
+    banner(`Loopjes laden mislukt: ${e.message}`);
   }
 }
 
@@ -77,7 +75,7 @@ function render() {
   const plan = buildPlan(state.settings);
   const matched = matchRuns(plan, state.runs, state.today);
   renderHero(plan);
-  renderStrava();
+  renderLogStatus();
   renderToday(plan, matched);
   renderStats(plan, matched);
   renderChart(matched);
@@ -94,31 +92,21 @@ function renderHero(plan) {
   $('goal-line').textContent = `Doel ${plan.settings.goalTime} · marathontempo ${plan.paces.marathon.label} · ${plan.weeks.length} weken schema`;
 }
 
-function renderStrava() {
-  const s = state.me?.strava;
-  const status = $('strava-status');
-  $('strava-connect').hidden = true;
-  $('strava-sync').hidden = true;
-  $('strava-disconnect').hidden = true;
+function renderLogStatus() {
+  const status = $('log-status');
+  const forms = [$('run-form'), $('gpx-form')];
+  forms.forEach((f) => { f.hidden = !state.api; });
   if (!state.api) {
-    status.textContent = 'De server is niet bereikbaar. Het schema werkt, maar zonder Strava-gegevens en instellingen worden enkel in deze browser bewaard.';
+    status.textContent = 'De server is niet bereikbaar. Het schema werkt, maar loopjes toevoegen kan pas als de server draait. Instellingen worden enkel in deze browser bewaard.';
     return;
   }
-  if (!s?.configured) {
-    status.textContent = 'Strava is nog niet ingesteld op de server (STRAVA_CLIENT_ID, STRAVA_CLIENT_SECRET en de KV-opslag).';
-    return;
-  }
-  if (!s.connected) {
-    status.textContent = 'Nog niet gekoppeld. Koppel je account om je loopjes automatisch af te vinken.';
-    $('strava-connect').hidden = false;
-    return;
-  }
-  const who = s.athlete ? `${s.athlete.firstname || ''} ${s.athlete.lastname || ''}`.trim() : 'je account';
-  const when = state.fetchedAt ? ` · bijgewerkt ${new Date(state.fetchedAt).toLocaleTimeString('nl-BE', { hour: '2-digit', minute: '2-digit' })}` : '';
-  status.textContent = `Gekoppeld met ${who} · ${state.runs.length} loopjes sinds de start${when}`;
-  $('strava-sync').hidden = false;
-  $('strava-disconnect').hidden = false;
+  const start = buildPlan(state.settings).weeks[0].start;
+  const since = state.runs.filter((r) => r.date >= start).length;
+  status.textContent = `${since} loopjes sinds de start van het schema (${state.runs.length} in totaal). Een loopje met dezelfde datum en afstand wordt maar één keer bewaard.`;
 }
+
+const SOURCE_LABEL = { manual: '', gpx: 'GPX', drx: 'DRX', 'drx-gpx': 'DRX · GPX' };
+const runLabel = (r) => esc(r.name || r.notes || 'Loopje');
 
 const STATUS_TEXT = {
   done: '✓ Gedaan',
@@ -238,7 +226,7 @@ function renderWeeks(matched) {
     const days = w.days.map((d) => {
       const isToday = d.date === state.today;
       const actual = d.actual.length
-        ? `<div class="day-actual">${d.actual.map((r) => `<a href="https://www.strava.com/activities/${r.id}" target="_blank" rel="noopener">${esc(r.name)}</a> · ${fmtKm(r.km)} km · ${fmtPace(r.movingTime / Math.max(r.km, 0.01))} /km`).join('<br>')}</div>`
+        ? `<div class="day-actual">${d.actual.map((r) => `${runLabel(r)} · ${fmtKm(r.km)} km · ${fmtPace(r.movingTime / Math.max(r.km, 0.01))} /km`).join('<br>')}</div>`
         : '';
       const tag = d.type !== 'rest' && d.title !== TYPE_LABELS[d.type] ? `<span class="tag">${esc(TYPE_LABELS[d.type])}</span>` : '';
       return `<div class="day ${d.type}${isToday ? ' is-today' : ''}">
@@ -265,11 +253,11 @@ function renderWeeks(matched) {
 function renderRuns() {
   const runs = state.runs.slice(0, 10);
   if (!runs.length) {
-    $('runs').innerHTML = `<p class="empty">${state.me?.strava?.connected ? 'Nog geen loopjes sinds de start van het schema.' : 'Koppel Strava om je loopjes hier te zien.'}</p>`;
+    $('runs').innerHTML = `<p class="empty">${state.api ? 'Nog geen loopjes. Voeg er hierboven een toe.' : 'De server is niet bereikbaar.'}</p>`;
     return;
   }
-  $('runs').innerHTML = `<table class="runs"><thead><tr><th>Datum</th><th>Naam</th><th class="num">Km</th><th class="num">Tempo</th><th class="num hide-sm">Tijd</th><th class="num hide-sm">Hartslag</th></tr></thead><tbody>${runs
-    .map((r) => `<tr><td>${DAYS[(parseDate(r.date).getUTCDay() + 6) % 7]} ${fmtDay(r.date)}</td><td><a href="https://www.strava.com/activities/${r.id}" target="_blank" rel="noopener">${esc(r.name)}</a></td><td class="num">${fmtKm(r.km)}</td><td class="num">${fmtPace(r.movingTime / Math.max(r.km, 0.01))}</td><td class="num hide-sm">${fmtDuration(r.movingTime)}</td><td class="num hide-sm">${r.avgHr ? Math.round(r.avgHr) : '–'}</td></tr>`)
+  $('runs').innerHTML = `<table class="runs"><thead><tr><th>Datum</th><th>Loopje</th><th class="num">Km</th><th class="num">Tempo</th><th class="num hide-sm">Tijd</th><th class="num hide-sm">Hartslag</th><th></th></tr></thead><tbody>${runs
+    .map((r) => `<tr><td>${DAYS[(parseDate(r.date).getUTCDay() + 6) % 7]} ${fmtDay(r.date)}</td><td title="${esc(r.notes)}">${runLabel(r)}${SOURCE_LABEL[r.source] ? `<span class="src">${SOURCE_LABEL[r.source]}</span>` : ''}</td><td class="num">${fmtKm(r.km)}</td><td class="num">${fmtPace(r.movingTime / Math.max(r.km, 0.01))}</td><td class="num hide-sm">${fmtDuration(r.movingTime)}</td><td class="num hide-sm">${r.avgHr ? Math.round(r.avgHr) : '–'}</td><td class="num"><button class="del" data-id="${r.id}" aria-label="Verwijder loopje van ${fmtDay(r.date)}" title="Verwijderen">✕</button></td></tr>`)
     .join('')}</tbody></table>`;
 }
 
@@ -300,22 +288,58 @@ $('settings-form').addEventListener('submit', async (e) => {
   render();
 });
 
-$('strava-sync').addEventListener('click', async (e) => {
-  e.target.disabled = true;
-  await loadRuns(true);
-  e.target.disabled = false;
-  render();
+function logMsg(text, error = false) {
+  const m = $('log-msg');
+  m.textContent = text;
+  m.className = error ? 'hint err' : 'hint';
+}
+
+async function submitRun(form, request, describe) {
+  const btn = form.querySelector('button[type=submit]');
+  btn.disabled = true;
+  logMsg('Bewaren…');
+  try {
+    const { run, duplicate } = await request();
+    logMsg(duplicate
+      ? `Dit loopje stond er al (${fmtDay(run.date)}, ${fmtKm(run.km)} km).`
+      : `${describe(run)} toegevoegd.`);
+    form.reset();
+    if (form.elements.date) form.elements.date.value = state.today;
+    await loadRuns();
+    render();
+  } catch (err) {
+    logMsg(err.message, true);
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+$('run-form').addEventListener('submit', (e) => {
+  e.preventDefault();
+  const f = e.target;
+  const body = Object.fromEntries([...new FormData(f)].filter(([, v]) => String(v).trim() !== ''));
+  submitRun(f, () => api('/api/runs', { method: 'POST', body: JSON.stringify(body) }),
+    (r) => `Loopje van ${fmtDay(r.date)} (${fmtKm(r.km)} km)`);
 });
 
-$('strava-disconnect').addEventListener('click', async () => {
-  if (!confirm('Strava ontkoppelen? Je schema blijft bewaard.')) return;
+$('gpx-form').addEventListener('submit', (e) => {
+  e.preventDefault();
+  const f = e.target;
+  submitRun(f, () => api('/api/runs/gpx', { method: 'POST', body: new FormData(f) }),
+    (r) => `GPX van ${fmtDay(r.date)}: ${fmtKm(r.km)} km in ${fmtDuration(r.movingTime)}`);
+});
+
+$('runs').addEventListener('click', async (e) => {
+  const btn = e.target.closest('button.del');
+  if (!btn) return;
+  const run = state.runs.find((r) => String(r.id) === btn.dataset.id);
+  if (!run || !confirm(`Loopje van ${fmtDay(run.date)} (${fmtKm(run.km)} km) verwijderen?`)) return;
   try {
-    await api('/api/strava/disconnect', { method: 'POST' });
+    await api(`/api/runs/${run.id}`, { method: 'DELETE' });
   } catch (err) {
     banner(err.message);
   }
-  state.runs = [];
-  await loadMe();
+  await loadRuns();
   render();
 });
 
@@ -335,18 +359,7 @@ $('jump-today').addEventListener('click', () => {
 
 /* ---------------- Start ---------------- */
 (async function start() {
-  const q = new URLSearchParams(location.search).get('strava');
-  const messages = {
-    connected: ['Strava is gekoppeld.', true],
-    denied: ['Je hebt de toegang tot Strava geweigerd.'],
-    scope: ['Geef toegang tot je activiteiten (ook privé) zodat het schema je loopjes kan zien.'],
-    state: ['De Strava-koppeling is verlopen. Probeer opnieuw.'],
-    error: ['Koppelen met Strava is mislukt.'],
-  };
-  if (q && messages[q]) {
-    banner(...messages[q]);
-    history.replaceState(null, '', location.pathname);
-  }
+  $('run-form').elements.date.value = state.today;
   render();
   await loadMe();
   await loadSettings();

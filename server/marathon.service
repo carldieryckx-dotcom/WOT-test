@@ -1,0 +1,25 @@
+# Voorbeeld-unit: kopieer naar /etc/systemd/system/marathon.service
+#   sudo systemctl daemon-reload && sudo systemctl enable --now marathon
+[Unit]
+Description=Marathonschema API (carldrx.io)
+After=network.target
+
+[Service]
+Type=simple
+User=carl
+WorkingDirectory=/var/www/mijnsite/server
+EnvironmentFile=/etc/marathon.env
+ExecStart=/usr/bin/node index.js
+Restart=on-failure
+RestartSec=3
+
+# Afscherming
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/lib/marathon
+StateDirectory=marathon
+
+[Install]
+WantedBy=multi-user.target

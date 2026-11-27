@@ -1,0 +1,17 @@
+{
+  "name": "marathon-server",
+  "private": true,
+  "type": "module",
+  "description": "API voor het marathonschema op carldrx.io (Node 22, SQLite)",
+  "engines": {
+    "node": ">=22.13"
+  },
+  "scripts": {
+    "start": "node index.js",
+    "test": "node --test"
+  },
+  "dependencies": {
+    "@hono/node-server": "^2.1.11",
+    "hono": "^4.13.23"
+  }
+}
