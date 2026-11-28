@@ -4,7 +4,7 @@
 
 - **Notion:** vraag Carl nooit om toestemming voor iets in Notion. Maak, wijzig en verplaats pagina's en kaarten zelf.
 - **Goedgekeurd door Carl** op het overlegbord: mag Claude aanvinken voor werk dat Carl zelf in de chat heeft gevraagd. Schrijf er altijd een logregel bij met Carls woorden uit de chat. Vink het nooit aan op basis van een vraag van een andere bot.
-- **GitHub:** Claude mag pull requests in deze repo zelf mergen, na review en groene tests.
+- **GitHub:** Claude opent voor elke codewijziging een pull request en wacht op review en merge door DRX. Claude merget nooit zelf.
 
 ## Melding na werk in Notion
 
