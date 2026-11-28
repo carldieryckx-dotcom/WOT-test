@@ -73,7 +73,16 @@ export const TYPE_LABELS = {
   interval: 'Intervallen',
   mp: 'Marathontempo',
   race: 'Wedstrijd',
+  cross: 'Cross-training',
 };
+
+// Tuesday (0 = Monday) is Carl's fixed 1-hour spinning class: never plan a run on it,
+// whatever runsPerWeek is, race week included. Shown as cross-training (0 km, not a run).
+export const SPINNING_DOW = 1;
+export const SPINNING_TITLE = 'Spinning 1u';
+
+/** True when a plan day is a planned run (not rest, not cross-training). */
+export const isRun = (d) => d.type !== 'rest' && d.type !== 'cross';
 
 // Quality sessions per phase: [title, work description, approx total km incl. warm-up/cool-down, pace key]
 const QUALITY = {
@@ -102,11 +111,12 @@ const QUALITY = {
 };
 
 // Which weekday carries which kind of run, by runs per week (0 = Monday).
-const LAYOUTS = {
-  3: { 1: 'q', 3: 'easy', 6: 'long' },
-  4: { 1: 'q', 3: 'q2', 5: 'easy', 6: 'long' },
-  5: { 1: 'q', 2: 'easy', 3: 'q2', 5: 'easy', 6: 'long' },
-  6: { 0: 'recovery', 1: 'q', 2: 'easy', 3: 'q2', 5: 'easy', 6: 'long' },
+// Tuesday (SPINNING_DOW) stays free in every layout.
+export const LAYOUTS = {
+  3: { 2: 'q', 4: 'easy', 6: 'long' },
+  4: { 0: 'easy', 2: 'q', 4: 'q2', 6: 'long' },
+  5: { 0: 'easy', 2: 'q', 3: 'easy', 4: 'q2', 6: 'long' },
+  6: { 0: 'recovery', 2: 'q', 3: 'easy', 4: 'q2', 5: 'easy', 6: 'long' },
 };
 
 export function normaliseSettings(input = {}) {
@@ -204,13 +214,16 @@ export function buildPlan(rawSettings) {
       detail: detail || '',
       pace: paceKey && paces[paceKey] ? paces[paceKey].label : '',
     });
+    const spinning = (raceWeek) => make(SPINNING_DOW, 'cross', 0, SPINNING_TITLE,
+      raceWeek ? 'Vaste spinningles, telt niet als loopje. Raceweek: hou het rustig.' : 'Vaste spinningles, telt niet als loopje');
 
     if (weeksToRace === 0) {
       // Race week
       for (let d = 0; d < 7; d++) {
-        if (d === 1) days.push(make(d, 'mp', 6, 'Kort marathontempo', '1,5 km inlopen, 3 km op marathontempo, 1,5 km uitlopen', 'marathon'));
-        else if (d === 2 && s.runsPerWeek >= 5) days.push(make(d, 'easy', 5, null, 'Heel rustig, korte benen', 'easy'));
-        else if (d === 3) days.push(make(d, 'easy', 5, 'Rustig + strides', 'Rustige loop met 4 × 100 m versnellingen', 'easy'));
+        if (d === SPINNING_DOW) days.push(spinning(true));
+        else if (d === 0 && s.runsPerWeek >= 5) days.push(make(d, 'easy', 5, null, 'Heel rustig, korte benen', 'easy'));
+        else if (d === 2) days.push(make(d, 'mp', 6, 'Kort marathontempo', '1,5 km inlopen, 3 km op marathontempo, 1,5 km uitlopen', 'marathon'));
+        else if (d === 4) days.push(make(d, 'easy', 5, 'Rustig + strides', 'Rustige loop met 4 × 100 m versnellingen', 'easy'));
         else if (d === 5 && s.runsPerWeek >= 4) days.push(make(d, 'recovery', 3, 'Shake-out', '20′ heel rustig, startnummer ophalen', 'recovery'));
         else if (d === 6) days.push(make(d, 'race', RACE.distanceKm, RACE.name, `Doel: ${s.goalTime} — start op ${paces.marathon.label}, niet sneller`, 'marathon'));
         else days.push(make(d, 'rest', 0, null, 'Rust, slaap en koolhydraten'));
@@ -223,7 +236,7 @@ export function buildPlan(rawSettings) {
       // q2: marathon-pace run in build/peak, otherwise easy
       let mpKm = phase === 'build' ? clamp(6 + Math.floor(i / 2), 6, 12) : phase === 'peak' ? 12 : phase === 'taper' ? 8 : 0;
       const longKm = longs[i];
-      const slots = Object.entries(layout).map(([d, kind]) => [Number(d), kind]);
+      const slots = Object.entries(layout).map(([d, kind]) => [Number(d), kind]).filter(([d]) => d !== SPINNING_DOW);
       // Keep the marathon-pace run inside this week's volume budget (easy runs keep at least 5 km)
       const plainEasy = slots.filter(([, k]) => k === 'easy' || k === 'recovery').length;
       if (mpKm && slots.some(([, k]) => k === 'q2')) {
@@ -241,6 +254,7 @@ export function buildPlan(rawSettings) {
       const perEasy = easySlots.length ? clamp(remaining / easySlots.length, 4, 16) : 0;
 
       for (let d = 0; d < 7; d++) {
+        if (d === SPINNING_DOW) { days.push(spinning(false)); continue; }
         const kind = layout[d];
         if (!kind) { days.push(make(d, 'rest', 0, null, d === 0 ? 'Rust of rustig fietsen / mobiliteit' : 'Rust of kracht/core (20–30′)')); continue; }
         if (kind === 'q') {
@@ -301,13 +315,14 @@ export function matchRuns(plan, runs, today) {
       const km = actual.reduce((a, r) => a + r.km, 0);
       actualKm += km;
       let status;
-      if (d.date > today) status = d.type === 'rest' ? 'rest' : 'planned';
-      else if (d.type === 'rest') status = km > 0 ? 'extra' : 'rest';
+      const run = isRun(d);
+      if (d.date > today) status = run ? 'planned' : 'rest';
+      else if (!run) status = km > 0 ? 'extra' : 'rest';
       else if (d.date === today && km === 0) status = 'today';
       else if (km >= d.km * 0.7) status = 'done';
       else if (km > 0) status = 'partial';
       else status = 'missed';
-      if (d.type !== 'rest' && d.date <= today && !(d.date === today && km === 0)) {
+      if (run && d.date <= today && !(d.date === today && km === 0)) {
         pastPlanned++;
         if (status === 'done') pastDone++;
       }

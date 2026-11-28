@@ -170,4 +170,6 @@ npm run dev              # http://localhost:8788/marathon/ zonder login, data in
 
 Klap onderaan op de pagina **Instellingen van je schema** open: doeltijd, aantal loopjes per week (3–6), je huidige weekvolume en langste loop, het piekvolume en de startdatum. Alles wordt meteen herberekend.
 
+Dinsdag is altijd vrij van looptrainingen (vaste spinningles van 1 uur). Het schema toont die dag als cross-training "Spinning 1u" (0 km, telt niet als loopje), bij elk aantal loopjes en ook in de raceweek. Bij 3 loopjes: woensdag kwaliteit, vrijdag rustige duurloop, zondag lange duurloop.
+
 Het schema is een algemeen opbouwschema, geen medisch advies. Bij pijn: rust gaat voor.
