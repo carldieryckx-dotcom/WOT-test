@@ -4,6 +4,7 @@
 //   ACCESS_TEAM_DOMAIN, ACCESS_AUD, ALLOWED_EMAIL   Cloudflare Access (required)
 //   DRX_API_TOKEN                                   optional, for imports from the server itself
 //   PORT=8788  HOST=127.0.0.1  DATA_DIR=/var/lib/marathon  TIMEZONE=Europe/Brussels
+//   FINANCE_FILE=/var/lib/finance/site-finance.json  (read-only, for GET /api/finance)
 //   DEV_BYPASS_AUTH=1, SERVE_STATIC=1                only for local development (npm run dev)
 
 import { serve } from '@hono/node-server';
@@ -29,6 +30,9 @@ if (process.env.SERVE_STATIC === '1') {
   const root = path.relative(process.cwd(), fileURLToPath(new URL('../../', import.meta.url))) || '.';
   app.get('/', (c) => c.redirect('/marathon/'));
   app.use('/marathon/*', serveStatic({ root }));
+  app.get('/finance', (c) => c.redirect('/finance/'));
+  app.use('/finance/*', serveStatic({ root }));
+  app.use('/fonts/*', serveStatic({ root }));
   console.warn(`Statische bestanden uit ${root} (SERVE_STATIC=1)`);
 }
 const server = serve({ fetch: app.fetch, port, hostname }, (info) => {

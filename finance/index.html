@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex,nofollow" />
+  <meta name="referrer" content="no-referrer" />
+  <title>Financieel overzicht</title>
+  <link rel="stylesheet" href="style.css?v=1" />
+</head>
+<body>
+  <header class="hero">
+    <div class="wrap hero-inner">
+      <div>
+        <p class="eyebrow" id="period">Privé</p>
+        <h1>Financieel overzicht</h1>
+        <p class="sub" id="updated">Gegevens laden…</p>
+      </div>
+      <label class="month-pick">
+        <span>Maand</span>
+        <select id="month" aria-label="Kies een maand" disabled></select>
+      </label>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <div id="banner" class="banner" role="alert" hidden></div>
+
+    <div id="content" hidden>
+      <section class="kpis" id="kpis" aria-label="Kerncijfers van de gekozen maand"></section>
+
+      <section class="card" aria-labelledby="bars-title">
+        <div class="section-head">
+          <h2 id="bars-title">Inkomsten en uitgaven per maand</h2>
+          <div class="legend" aria-hidden="true">
+            <span><i class="sw sw-income"></i>Inkomsten</span>
+            <span><i class="sw sw-spending"></i>Uitgaven</span>
+          </div>
+        </div>
+        <div class="chart" id="bars"></div>
+        <details class="table-view"><summary>Als tabel</summary><div id="bars-table"></div></details>
+      </section>
+
+      <section class="card" aria-labelledby="cat-title">
+        <div class="section-head">
+          <h2 id="cat-title">Uitgaven per categorie</h2>
+          <div class="seg" role="group" aria-label="Sorteren">
+            <button class="btn btn-ghost btn-small" data-sort="amount" type="button">Bedrag</button>
+            <button class="btn btn-ghost btn-small" data-sort="name" type="button">Naam</button>
+          </div>
+        </div>
+        <div id="cats"></div>
+      </section>
+
+      <section class="card" aria-labelledby="tx-title">
+        <div class="section-head">
+          <h2 id="tx-title">Transacties</h2>
+          <span class="muted" id="tx-count"></span>
+        </div>
+        <form class="filters" id="tx-filters">
+          <label>Maand <select name="month"></select></label>
+          <label>Categorie <select name="category"></select></label>
+          <label>Rekening <select name="account"></select></label>
+          <label class="grow">Zoeken <input name="q" type="search" placeholder="Tegenpartij of categorie" autocomplete="off" /></label>
+          <label class="check"><input name="excluded" type="checkbox" /> Uitgesloten tonen</label>
+        </form>
+        <div class="table-wrap" id="tx"></div>
+        <div class="more"><button class="btn btn-ghost btn-small" id="tx-more" type="button" hidden>Meer tonen</button></div>
+      </section>
+
+      <div class="two-col">
+        <section class="card" aria-labelledby="pay-title">
+          <h2 id="pay-title">Open betalingen en facturen</h2>
+          <div id="payments"></div>
+        </section>
+
+        <section class="card" aria-labelledby="sub-title">
+          <h2 id="sub-title">Abonnementen</h2>
+          <div id="subs"></div>
+        </section>
+      </div>
+
+      <section class="card" aria-labelledby="nw-title">
+        <div class="section-head">
+          <h2 id="nw-title">Nettovermogen</h2>
+          <div class="legend" id="nw-legend" aria-hidden="true"></div>
+        </div>
+        <div class="chart" id="networth"></div>
+        <p class="note" id="nw-note" hidden>Open bolletjes en een stippellijn: geschat vermogen, teruggerekend.</p>
+        <details class="table-view"><summary>Als tabel</summary><div id="nw-table"></div></details>
+      </section>
+
+      <aside class="footnotes" aria-label="Voorbehouden">
+        <p>Voorbehouden</p>
+        <ul>
+          <li>De lopende maand is nog niet afgesloten (gemarkeerd met ◷ in de maandkiezer).</li>
+          <li>Maanden met geschat vermogen zijn teruggerekend.</li>
+          <li>Creditcard: alleen de maandelijkse afrekening is zichtbaar, geen losse aankopen.</li>
+          <li>PayPal- en Apple-betalingen zijn enkel totalen.</li>
+          <li>ING- en Argenta-rekeningen zijn niet gekoppeld.</li>
+          <li>Interne overschrijvingen en spaarbewegingen tellen niet mee in totalen en grafieken.</li>
+        </ul>
+      </aside>
+    </div>
+  </main>
+
+  <div class="chart-tip" id="tip" hidden></div>
+  <footer class="wrap foot">Privé · enkel zichtbaar voor jou</footer>
+
+  <script type="module" src="app.js?v=1"></script>
+</body>
+</html>

@@ -8,14 +8,17 @@
 //   POST   /api/runs/gpx          multipart upload, field "file" (≤10 MB)
 //   DELETE /api/runs/:id
 //   GET    /api/auth-check        204 when signed in (for Caddy forward_auth on /marathon)
+//   GET    /api/finance           contents of FINANCE_FILE (Access login only, see FINANCE.md)
 
 import { Hono } from 'hono';
 import { bodyLimit } from 'hono/body-limit';
 import { createHash, timingSafeEqual } from 'node:crypto';
+import { readFile } from 'node:fs/promises';
 import { verifyAccess, AuthError } from '../../lib/access.js';
 import { validateRun, validateSettings, isDate, InputError } from './validate.js';
 import { parseGpx } from './gpx.js';
 
+export const DEFAULT_FINANCE_FILE = '/var/lib/finance/site-finance.json';
 export const MAX_GPX_BYTES = 10 * 1024 * 1024;
 const MAX_JSON_BYTES = 2 * 1024 * 1024;
 const MAX_BULK = 1000;
@@ -100,6 +103,31 @@ export function createApp({ store, env = process.env }) {
   const result = ({ run, created }) => ({ run, created, skipped: !created });
 
   app.get('/api/auth-check', (c) => c.body(null, 204));
+
+  // Private finance overview (FINANCE.md). The file is maintained by DRX outside the repo
+  // and re-read on every request. Never log or echo its contents.
+  app.get('/api/finance', async (c) => {
+    c.header('cache-control', 'private, no-store');
+    const file = env.FINANCE_FILE || DEFAULT_FINANCE_FILE;
+    let text;
+    try {
+      text = await readFile(file, 'utf8');
+    } catch (e) {
+      if (e && (e.code === 'ENOENT' || e.code === 'ENOTDIR')) {
+        return c.json({ error: 'Nog geen financiële gegevens beschikbaar' }, 404);
+      }
+      console.error(`finance: bestand niet leesbaar (${e?.code || 'onbekende fout'})`);
+      return c.json({ error: 'Financiële gegevens konden niet gelezen worden' }, 500);
+    }
+    try {
+      JSON.parse(text);
+    } catch {
+      // Deliberately without the parser message: it can quote part of the file.
+      console.error('finance: bestand is geen geldige JSON');
+      return c.json({ error: 'Financiële gegevens zijn ongeldig' }, 502);
+    }
+    return c.body(text, 200, { 'content-type': 'application/json; charset=utf-8' });
+  });
 
   app.get('/api/me', (c) => {
     const u = c.get('user');
