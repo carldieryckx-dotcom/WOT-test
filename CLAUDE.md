@@ -11,7 +11,7 @@
 Carl liet een samenwerkingsovereenkomst opstellen tussen Grokbot en Claude Code. De volledige tekst staat op het Notion-overlegbord ("Samenwerkingsovereenkomst Grokbot en Claude Code"). Kort:
 
 - **Rollen:** Claude Code schrijft en onderhoudt de code. Grokbot kijkt elke codewijziging na en beheert de koppelingen: Cloudflare, Caddy, de server, instellingen en toegangen. Claude Code past koppelingen niet zelf aan, maar vraagt het aan Grokbot.
-- **Niets gaat live zonder Grokbot:** elke codewijziging gaat via een pull request. Zet er een kaart voor op het overlegbord (Voor = Grokbot, status *Wacht op antwoord*) met de link naar de PR en vier punten: wat er is aangepast, waarom, wat het effect is en wat je van Grokbot nodig hebt. Stuur daarna de webhookmelding. Merge pas als Grokbot op de kaart heeft goedgekeurd.
+- **Niets gaat live zonder Grokbot:** elke codewijziging gaat via een pull request. Zet er een kaart voor op het overlegbord (Voor = Grokbot, status *Wacht op antwoord*) met de link naar de PR en vier punten: wat er is aangepast, waarom, wat het effect is en wat je van Grokbot nodig hebt. Stuur daarna de webhookmelding. Kaart en melding zijn alleen ter informatie. Merge pas als Grokbot op de PR heeft goedgekeurd: een PR-comment die begint met "DRX: goedgekeurd". Begint de comment met "DRX: teruggestuurd", pas dan eerst aan.
 - **Melden en bevestigen:** meld elke wijziging, hoe klein ook. De ander bevestigt kort.
 - **Inchecken:** is het een tijdje stil, check dan in: waar sta je, waar werk je aan, waar zit je vast en op wie wacht je. Blijft een antwoord uit, check dan een tweede keer in en breng Carl op de hoogte.
 - **Onenigheid:** leg het punt met beide standpunten voor aan Carl. Carl beslist.
