@@ -11,6 +11,7 @@
   "scripts": {
     "start": "node --disable-warning=ExperimentalWarning src/index.js",
     "dev": "DEV_BYPASS_AUTH=1 SERVE_STATIC=1 DATA_DIR=./data node --disable-warning=ExperimentalWarning src/index.js",
+    "dev:finance": "DEV_BYPASS_AUTH=1 SERVE_STATIC=1 DATA_DIR=./data FINANCE_FILE=./test/fixtures/finance-sample.json node --disable-warning=ExperimentalWarning src/index.js",
     "test": "node --disable-warning=ExperimentalWarning --test test/*.test.js"
   },
   "dependencies": {

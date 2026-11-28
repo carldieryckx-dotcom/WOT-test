@@ -1,0 +1,1137 @@
+{
+  "_fixture": "VERZONNEN TESTDATA",
+  "updated": "2026-11-21T05:30:00Z",
+  "period": {
+    "from": "2026-06-01",
+    "to": "2026-11-20"
+  },
+  "months": [
+    {
+      "month": "2026-06",
+      "income": 2500,
+      "spending": 1738.34,
+      "net": 761.66,
+      "byCategory": {
+        "income": {
+          "Loon": 2500
+        },
+        "spending": {
+          "Boodschappen": 184.75,
+          "Wonen": 950,
+          "Energie": 142.62,
+          "Vervoer": 100.98,
+          "Restaurant": 89.58,
+          "Abonnementen": 12.99,
+          "Gezondheid": 12.74,
+          "Creditcard": 244.68
+        }
+      }
+    },
+    {
+      "month": "2026-07",
+      "income": 2585.5,
+      "spending": 1717.6,
+      "net": 867.9,
+      "byCategory": {
+        "income": {
+          "Loon": 2500,
+          "Terugbetaling": 85.5
+        },
+        "spending": {
+          "Boodschappen": 191.37,
+          "Wonen": 950,
+          "Energie": 132.83,
+          "Vervoer": 109.98,
+          "Restaurant": 75.04,
+          "Abonnementen": 12.99,
+          "Gezondheid": 25.88,
+          "Creditcard": 219.51
+        }
+      }
+    },
+    {
+      "month": "2026-08",
+      "income": 2500,
+      "spending": 1751.41,
+      "net": 748.59,
+      "byCategory": {
+        "income": {
+          "Loon": 2500
+        },
+        "spending": {
+          "Boodschappen": 241.4,
+          "Wonen": 950,
+          "Energie": 117.6,
+          "Vervoer": 114.39,
+          "Restaurant": 81.79,
+          "Abonnementen": 12.99,
+          "Gezondheid": 23.31,
+          "Creditcard": 209.93
+        }
+      }
+    },
+    {
+      "month": "2026-09",
+      "income": 2500,
+      "spending": 1888.18,
+      "net": 611.82,
+      "byCategory": {
+        "income": {
+          "Loon": 2500
+        },
+        "spending": {
+          "Boodschappen": 285.76,
+          "Wonen": 950,
+          "Energie": 146.86,
+          "Vervoer": 133.15,
+          "Restaurant": 104.93,
+          "Abonnementen": 12.99,
+          "Gezondheid": 20.9,
+          "Creditcard": 233.59
+        }
+      }
+    },
+    {
+      "month": "2026-10",
+      "income": 2585.5,
+      "spending": 1700.17,
+      "net": 885.33,
+      "byCategory": {
+        "income": {
+          "Loon": 2500,
+          "Terugbetaling": 85.5
+        },
+        "spending": {
+          "Boodschappen": 187.81,
+          "Wonen": 950,
+          "Energie": 127.13,
+          "Vervoer": 103.3,
+          "Restaurant": 99.47,
+          "Abonnementen": 12.99,
+          "Gezondheid": 24.01,
+          "Creditcard": 195.46
+        }
+      }
+    },
+    {
+      "month": "2026-11",
+      "income": 0,
+      "spending": 1528.56,
+      "net": -1528.56,
+      "byCategory": {
+        "income": {},
+        "spending": {
+          "Boodschappen": 188.99,
+          "Wonen": 950,
+          "Energie": 149.56,
+          "Vervoer": 123.4,
+          "Restaurant": 72.99,
+          "Abonnementen": 12.99,
+          "Gezondheid": 30.63
+        }
+      }
+    }
+  ],
+  "transactions": [
+    {
+      "date": "2026-11-17",
+      "month": "2026-11",
+      "account": "Testbank Zicht",
+      "amount": -47.42,
+      "type": "spending",
+      "category": "Boodschappen",
+      "counterparty": "Voorbeeldwinkel 1"
+    },
+    {
+      "date": "2026-11-15",
+      "month": "2026-11",
+      "account": "Testbank Zicht",
+      "amount": -30.63,
+      "type": "spending",
+      "category": "Gezondheid",
+      "counterparty": "Apotheek Fictief"
+    },
+    {
+      "date": "2026-11-15",
+      "month": "2026-11",
+      "account": "Testbank Zicht",
+      "amount": -300,
+      "type": "excluded",
+      "category": "Sparen",
+      "counterparty": "Eigen spaarrekening (test)"
+    },
+    {
+      "date": "2026-11-13",
+      "month": "2026-11",
+      "account": "Testbank Zicht",
+      "amount": -950,
+      "type": "spending",
+      "category": "Wonen",
+      "counterparty": "Fictieve Verhuur bv"
+    },
+    {
+      "date": "2026-11-11",
+      "month": "2026-11",
+      "account": "Testbank Zicht",
+      "amount": -63.54,
+      "type": "spending",
+      "category": "Vervoer",
+      "counterparty": "Demo Tankstation 2"
+    },
+    {
+      "date": "2026-11-08",
+      "month": "2026-11",
+      "account": "Testbank Zicht",
+      "amount": -41.99,
+      "type": "spending",
+      "category": "Boodschappen",
+      "counterparty": "Voorbeeldwinkel 4"
+    },
+    {
+      "date": "2026-11-07",
+      "month": "2026-11",
+      "account": "Testbank Zicht",
+      "amount": -37.75,
+      "type": "spending",
+      "category": "Boodschappen",
+      "counterparty": "Voorbeeldwinkel 3"
+    },
+    {
+      "date": "2026-11-06",
+      "month": "2026-11",
+      "account": "Testbank Zicht",
+      "amount": -149.56,
+      "type": "spending",
+      "category": "Energie",
+      "counterparty": "Testenergie nv"
+    },
+    {
+      "date": "2026-11-05",
+      "month": "2026-11",
+      "account": "Testbank Zicht",
+      "amount": -35.46,
+      "type": "spending",
+      "category": "Restaurant",
+      "counterparty": "Café Verzonnen 2"
+    },
+    {
+      "date": "2026-11-05",
+      "month": "2026-11",
+      "account": "Testbank Creditcard",
+      "amount": 150,
+      "type": "excluded",
+      "category": "Interne overschrijving",
+      "counterparty": "Eigen rekening (test)"
+    },
+    {
+      "date": "2026-11-04",
+      "month": "2026-11",
+      "account": "Testbank Zicht",
+      "amount": -59.86,
+      "type": "spending",
+      "category": "Vervoer",
+      "counterparty": "Demo Tankstation 1"
+    },
+    {
+      "date": "2026-11-04",
+      "month": "2026-11",
+      "account": "Testbank Zicht",
+      "amount": -12.99,
+      "type": "spending",
+      "category": "Abonnementen",
+      "counterparty": "Streamdienst Demo"
+    },
+    {
+      "date": "2026-11-03",
+      "month": "2026-11",
+      "account": "Testbank Zicht",
+      "amount": -37.53,
+      "type": "spending",
+      "category": "Restaurant",
+      "counterparty": "Café Verzonnen 1"
+    },
+    {
+      "date": "2026-11-02",
+      "month": "2026-11",
+      "account": "Testbank Zicht",
+      "amount": -61.83,
+      "type": "spending",
+      "category": "Boodschappen",
+      "counterparty": "Voorbeeldwinkel 2"
+    },
+    {
+      "date": "2026-10-28",
+      "month": "2026-10",
+      "account": "Testbank Zicht",
+      "amount": -195.46,
+      "type": "spending",
+      "category": "Creditcard",
+      "counterparty": "Afrekening Testkaart"
+    },
+    {
+      "date": "2026-10-26",
+      "month": "2026-10",
+      "account": "Testbank Zicht",
+      "amount": -300,
+      "type": "excluded",
+      "category": "Sparen",
+      "counterparty": "Eigen spaarrekening (test)"
+    },
+    {
+      "date": "2026-10-25",
+      "month": "2026-10",
+      "account": "Testbank Zicht",
+      "amount": 2500,
+      "type": "income",
+      "category": "Loon",
+      "counterparty": "Testwerkgever"
+    },
+    {
+      "date": "2026-10-23",
+      "month": "2026-10",
+      "account": "Testbank Zicht",
+      "amount": -12.99,
+      "type": "spending",
+      "category": "Abonnementen",
+      "counterparty": "Streamdienst Demo"
+    },
+    {
+      "date": "2026-10-20",
+      "month": "2026-10",
+      "account": "Testbank Zicht",
+      "amount": -57.74,
+      "type": "spending",
+      "category": "Restaurant",
+      "counterparty": "Café Verzonnen 1"
+    },
+    {
+      "date": "2026-10-19",
+      "month": "2026-10",
+      "account": "Testbank Zicht",
+      "amount": -47.18,
+      "type": "spending",
+      "category": "Boodschappen",
+      "counterparty": "Voorbeeldwinkel 4"
+    },
+    {
+      "date": "2026-10-16",
+      "month": "2026-10",
+      "account": "Testbank Zicht",
+      "amount": -65.68,
+      "type": "spending",
+      "category": "Boodschappen",
+      "counterparty": "Voorbeeldwinkel 1"
+    },
+    {
+      "date": "2026-10-13",
+      "month": "2026-10",
+      "account": "Testbank Zicht",
+      "amount": -20.67,
+      "type": "spending",
+      "category": "Boodschappen",
+      "counterparty": "Voorbeeldwinkel 3"
+    },
+    {
+      "date": "2026-10-13",
+      "month": "2026-10",
+      "account": "Testbank Zicht",
+      "amount": -950,
+      "type": "spending",
+      "category": "Wonen",
+      "counterparty": "Fictieve Verhuur bv"
+    },
+    {
+      "date": "2026-10-12",
+      "month": "2026-10",
+      "account": "Testbank Zicht",
+      "amount": 85.5,
+      "type": "income",
+      "category": "Terugbetaling",
+      "counterparty": "Voorbeeldmutualiteit"
+    },
+    {
+      "date": "2026-10-08",
+      "month": "2026-10",
+      "account": "Testbank Zicht",
+      "amount": -52.33,
+      "type": "spending",
+      "category": "Vervoer",
+      "counterparty": "Demo Tankstation 1"
+    },
+    {
+      "date": "2026-10-07",
+      "month": "2026-10",
+      "account": "Testbank Zicht",
+      "amount": -50.97,
+      "type": "spending",
+      "category": "Vervoer",
+      "counterparty": "Demo Tankstation 2"
+    },
+    {
+      "date": "2026-10-05",
+      "month": "2026-10",
+      "account": "Testbank Creditcard",
+      "amount": 150,
+      "type": "excluded",
+      "category": "Interne overschrijving",
+      "counterparty": "Eigen rekening (test)"
+    },
+    {
+      "date": "2026-10-04",
+      "month": "2026-10",
+      "account": "Testbank Zicht",
+      "amount": -127.13,
+      "type": "spending",
+      "category": "Energie",
+      "counterparty": "Testenergie nv"
+    },
+    {
+      "date": "2026-10-04",
+      "month": "2026-10",
+      "account": "Testbank Zicht",
+      "amount": -24.01,
+      "type": "spending",
+      "category": "Gezondheid",
+      "counterparty": "Apotheek Fictief"
+    },
+    {
+      "date": "2026-10-02",
+      "month": "2026-10",
+      "account": "Testbank Zicht",
+      "amount": -54.28,
+      "type": "spending",
+      "category": "Boodschappen",
+      "counterparty": "Voorbeeldwinkel 2"
+    },
+    {
+      "date": "2026-10-01",
+      "month": "2026-10",
+      "account": "Testbank Zicht",
+      "amount": -41.73,
+      "type": "spending",
+      "category": "Restaurant",
+      "counterparty": "Café Verzonnen 2"
+    },
+    {
+      "date": "2026-09-28",
+      "month": "2026-09",
+      "account": "Testbank Zicht",
+      "amount": -233.59,
+      "type": "spending",
+      "category": "Creditcard",
+      "counterparty": "Afrekening Testkaart"
+    },
+    {
+      "date": "2026-09-26",
+      "month": "2026-09",
+      "account": "Testbank Zicht",
+      "amount": -300,
+      "type": "excluded",
+      "category": "Sparen",
+      "counterparty": "Eigen spaarrekening (test)"
+    },
+    {
+      "date": "2026-09-25",
+      "month": "2026-09",
+      "account": "Testbank Zicht",
+      "amount": 2500,
+      "type": "income",
+      "category": "Loon",
+      "counterparty": "Testwerkgever"
+    },
+    {
+      "date": "2026-09-25",
+      "month": "2026-09",
+      "account": "Testbank Zicht",
+      "amount": -950,
+      "type": "spending",
+      "category": "Wonen",
+      "counterparty": "Fictieve Verhuur bv"
+    },
+    {
+      "date": "2026-09-24",
+      "month": "2026-09",
+      "account": "Testbank Zicht",
+      "amount": -50.99,
+      "type": "spending",
+      "category": "Restaurant",
+      "counterparty": "Café Verzonnen 1"
+    },
+    {
+      "date": "2026-09-16",
+      "month": "2026-09",
+      "account": "Testbank Zicht",
+      "amount": -53.94,
+      "type": "spending",
+      "category": "Restaurant",
+      "counterparty": "Café Verzonnen 2"
+    },
+    {
+      "date": "2026-09-15",
+      "month": "2026-09",
+      "account": "Testbank Zicht",
+      "amount": -12.99,
+      "type": "spending",
+      "category": "Abonnementen",
+      "counterparty": "Streamdienst Demo"
+    },
+    {
+      "date": "2026-09-14",
+      "month": "2026-09",
+      "account": "Testbank Zicht",
+      "amount": -56.48,
+      "type": "spending",
+      "category": "Boodschappen",
+      "counterparty": "Voorbeeldwinkel 1"
+    },
+    {
+      "date": "2026-09-13",
+      "month": "2026-09",
+      "account": "Testbank Zicht",
+      "amount": -69.32,
+      "type": "spending",
+      "category": "Vervoer",
+      "counterparty": "Demo Tankstation 1"
+    },
+    {
+      "date": "2026-09-12",
+      "month": "2026-09",
+      "account": "Testbank Zicht",
+      "amount": -146.86,
+      "type": "spending",
+      "category": "Energie",
+      "counterparty": "Testenergie nv"
+    },
+    {
+      "date": "2026-09-10",
+      "month": "2026-09",
+      "account": "Testbank Zicht",
+      "amount": -73.78,
+      "type": "spending",
+      "category": "Boodschappen",
+      "counterparty": "Voorbeeldwinkel 3"
+    },
+    {
+      "date": "2026-09-10",
+      "month": "2026-09",
+      "account": "Testbank Zicht",
+      "amount": -20.9,
+      "type": "spending",
+      "category": "Gezondheid",
+      "counterparty": "Apotheek Fictief"
+    },
+    {
+      "date": "2026-09-09",
+      "month": "2026-09",
+      "account": "Testbank Zicht",
+      "amount": -63.83,
+      "type": "spending",
+      "category": "Vervoer",
+      "counterparty": "Demo Tankstation 2"
+    },
+    {
+      "date": "2026-09-08",
+      "month": "2026-09",
+      "account": "Testbank Zicht",
+      "amount": -66.65,
+      "type": "spending",
+      "category": "Boodschappen",
+      "counterparty": "Voorbeeldwinkel 4"
+    },
+    {
+      "date": "2026-09-05",
+      "month": "2026-09",
+      "account": "Testbank Creditcard",
+      "amount": 150,
+      "type": "excluded",
+      "category": "Interne overschrijving",
+      "counterparty": "Eigen rekening (test)"
+    },
+    {
+      "date": "2026-09-03",
+      "month": "2026-09",
+      "account": "Testbank Zicht",
+      "amount": -88.85,
+      "type": "spending",
+      "category": "Boodschappen",
+      "counterparty": "Voorbeeldwinkel 2"
+    },
+    {
+      "date": "2026-08-28",
+      "month": "2026-08",
+      "account": "Testbank Zicht",
+      "amount": -209.93,
+      "type": "spending",
+      "category": "Creditcard",
+      "counterparty": "Afrekening Testkaart"
+    },
+    {
+      "date": "2026-08-27",
+      "month": "2026-08",
+      "account": "Testbank Zicht",
+      "amount": -58.23,
+      "type": "spending",
+      "category": "Boodschappen",
+      "counterparty": "Voorbeeldwinkel 2"
+    },
+    {
+      "date": "2026-08-27",
+      "month": "2026-08",
+      "account": "Testbank Zicht",
+      "amount": -117.6,
+      "type": "spending",
+      "category": "Energie",
+      "counterparty": "Testenergie nv"
+    },
+    {
+      "date": "2026-08-26",
+      "month": "2026-08",
+      "account": "Testbank Zicht",
+      "amount": -300,
+      "type": "excluded",
+      "category": "Sparen",
+      "counterparty": "Eigen spaarrekening (test)"
+    },
+    {
+      "date": "2026-08-25",
+      "month": "2026-08",
+      "account": "Testbank Zicht",
+      "amount": 2500,
+      "type": "income",
+      "category": "Loon",
+      "counterparty": "Testwerkgever"
+    },
+    {
+      "date": "2026-08-22",
+      "month": "2026-08",
+      "account": "Testbank Zicht",
+      "amount": -28.41,
+      "type": "spending",
+      "category": "Restaurant",
+      "counterparty": "Café Verzonnen 2"
+    },
+    {
+      "date": "2026-08-19",
+      "month": "2026-08",
+      "account": "Testbank Zicht",
+      "amount": -51.98,
+      "type": "spending",
+      "category": "Vervoer",
+      "counterparty": "Demo Tankstation 1"
+    },
+    {
+      "date": "2026-08-18",
+      "month": "2026-08",
+      "account": "Testbank Zicht",
+      "amount": -23.31,
+      "type": "spending",
+      "category": "Gezondheid",
+      "counterparty": "Apotheek Fictief"
+    },
+    {
+      "date": "2026-08-12",
+      "month": "2026-08",
+      "account": "Testbank Zicht",
+      "amount": -69.11,
+      "type": "spending",
+      "category": "Boodschappen",
+      "counterparty": "Voorbeeldwinkel 4"
+    },
+    {
+      "date": "2026-08-12",
+      "month": "2026-08",
+      "account": "Testbank Zicht",
+      "amount": -62.41,
+      "type": "spending",
+      "category": "Vervoer",
+      "counterparty": "Demo Tankstation 2"
+    },
+    {
+      "date": "2026-08-06",
+      "month": "2026-08",
+      "account": "Testbank Zicht",
+      "amount": -24.53,
+      "type": "spending",
+      "category": "Boodschappen",
+      "counterparty": "Voorbeeldwinkel 1"
+    },
+    {
+      "date": "2026-08-06",
+      "month": "2026-08",
+      "account": "Testbank Zicht",
+      "amount": -950,
+      "type": "spending",
+      "category": "Wonen",
+      "counterparty": "Fictieve Verhuur bv"
+    },
+    {
+      "date": "2026-08-05",
+      "month": "2026-08",
+      "account": "Testbank Zicht",
+      "amount": -53.38,
+      "type": "spending",
+      "category": "Restaurant",
+      "counterparty": "Café Verzonnen 1"
+    },
+    {
+      "date": "2026-08-05",
+      "month": "2026-08",
+      "account": "Testbank Creditcard",
+      "amount": 150,
+      "type": "excluded",
+      "category": "Interne overschrijving",
+      "counterparty": "Eigen rekening (test)"
+    },
+    {
+      "date": "2026-08-03",
+      "month": "2026-08",
+      "account": "Testbank Zicht",
+      "amount": -89.53,
+      "type": "spending",
+      "category": "Boodschappen",
+      "counterparty": "Voorbeeldwinkel 3"
+    },
+    {
+      "date": "2026-08-01",
+      "month": "2026-08",
+      "account": "Testbank Zicht",
+      "amount": -12.99,
+      "type": "spending",
+      "category": "Abonnementen",
+      "counterparty": "Streamdienst Demo"
+    },
+    {
+      "date": "2026-07-28",
+      "month": "2026-07",
+      "account": "Testbank Zicht",
+      "amount": -219.51,
+      "type": "spending",
+      "category": "Creditcard",
+      "counterparty": "Afrekening Testkaart"
+    },
+    {
+      "date": "2026-07-27",
+      "month": "2026-07",
+      "account": "Testbank Zicht",
+      "amount": -950,
+      "type": "spending",
+      "category": "Wonen",
+      "counterparty": "Fictieve Verhuur bv"
+    },
+    {
+      "date": "2026-07-26",
+      "month": "2026-07",
+      "account": "Testbank Zicht",
+      "amount": -300,
+      "type": "excluded",
+      "category": "Sparen",
+      "counterparty": "Eigen spaarrekening (test)"
+    },
+    {
+      "date": "2026-07-25",
+      "month": "2026-07",
+      "account": "Testbank Zicht",
+      "amount": 2500,
+      "type": "income",
+      "category": "Loon",
+      "counterparty": "Testwerkgever"
+    },
+    {
+      "date": "2026-07-22",
+      "month": "2026-07",
+      "account": "Testbank Zicht",
+      "amount": -132.83,
+      "type": "spending",
+      "category": "Energie",
+      "counterparty": "Testenergie nv"
+    },
+    {
+      "date": "2026-07-21",
+      "month": "2026-07",
+      "account": "Testbank Zicht",
+      "amount": -58.71,
+      "type": "spending",
+      "category": "Vervoer",
+      "counterparty": "Demo Tankstation 1"
+    },
+    {
+      "date": "2026-07-18",
+      "month": "2026-07",
+      "account": "Testbank Zicht",
+      "amount": -37.73,
+      "type": "spending",
+      "category": "Restaurant",
+      "counterparty": "Café Verzonnen 2"
+    },
+    {
+      "date": "2026-07-13",
+      "month": "2026-07",
+      "account": "Testbank Zicht",
+      "amount": -53.04,
+      "type": "spending",
+      "category": "Boodschappen",
+      "counterparty": "Voorbeeldwinkel 2"
+    },
+    {
+      "date": "2026-07-13",
+      "month": "2026-07",
+      "account": "Testbank Zicht",
+      "amount": -36.34,
+      "type": "spending",
+      "category": "Boodschappen",
+      "counterparty": "Voorbeeldwinkel 3"
+    },
+    {
+      "date": "2026-07-12",
+      "month": "2026-07",
+      "account": "Testbank Zicht",
+      "amount": 85.5,
+      "type": "income",
+      "category": "Terugbetaling",
+      "counterparty": "Voorbeeldmutualiteit"
+    },
+    {
+      "date": "2026-07-10",
+      "month": "2026-07",
+      "account": "Testbank Zicht",
+      "amount": -51.27,
+      "type": "spending",
+      "category": "Vervoer",
+      "counterparty": "Demo Tankstation 2"
+    },
+    {
+      "date": "2026-07-08",
+      "month": "2026-07",
+      "account": "Testbank Zicht",
+      "amount": -37.31,
+      "type": "spending",
+      "category": "Restaurant",
+      "counterparty": "Café Verzonnen 1"
+    },
+    {
+      "date": "2026-07-05",
+      "month": "2026-07",
+      "account": "Testbank Zicht",
+      "amount": -25.88,
+      "type": "spending",
+      "category": "Gezondheid",
+      "counterparty": "Apotheek Fictief"
+    },
+    {
+      "date": "2026-07-05",
+      "month": "2026-07",
+      "account": "Testbank Creditcard",
+      "amount": 150,
+      "type": "excluded",
+      "category": "Interne overschrijving",
+      "counterparty": "Eigen rekening (test)"
+    },
+    {
+      "date": "2026-07-04",
+      "month": "2026-07",
+      "account": "Testbank Zicht",
+      "amount": -80.38,
+      "type": "spending",
+      "category": "Boodschappen",
+      "counterparty": "Voorbeeldwinkel 1"
+    },
+    {
+      "date": "2026-07-02",
+      "month": "2026-07",
+      "account": "Testbank Zicht",
+      "amount": -12.99,
+      "type": "spending",
+      "category": "Abonnementen",
+      "counterparty": "Streamdienst Demo"
+    },
+    {
+      "date": "2026-07-01",
+      "month": "2026-07",
+      "account": "Testbank Zicht",
+      "amount": -21.61,
+      "type": "spending",
+      "category": "Boodschappen",
+      "counterparty": "Voorbeeldwinkel 4"
+    },
+    {
+      "date": "2026-06-28",
+      "month": "2026-06",
+      "account": "Testbank Zicht",
+      "amount": -244.68,
+      "type": "spending",
+      "category": "Creditcard",
+      "counterparty": "Afrekening Testkaart"
+    },
+    {
+      "date": "2026-06-27",
+      "month": "2026-06",
+      "account": "Testbank Zicht",
+      "amount": -55.86,
+      "type": "spending",
+      "category": "Boodschappen",
+      "counterparty": "Voorbeeldwinkel 4"
+    },
+    {
+      "date": "2026-06-26",
+      "month": "2026-06",
+      "account": "Testbank Zicht",
+      "amount": -300,
+      "type": "excluded",
+      "category": "Sparen",
+      "counterparty": "Eigen spaarrekening (test)"
+    },
+    {
+      "date": "2026-06-25",
+      "month": "2026-06",
+      "account": "Testbank Zicht",
+      "amount": 2500,
+      "type": "income",
+      "category": "Loon",
+      "counterparty": "Testwerkgever"
+    },
+    {
+      "date": "2026-06-25",
+      "month": "2026-06",
+      "account": "Testbank Zicht",
+      "amount": -53.56,
+      "type": "spending",
+      "category": "Vervoer",
+      "counterparty": "Demo Tankstation 1"
+    },
+    {
+      "date": "2026-06-20",
+      "month": "2026-06",
+      "account": "Testbank Zicht",
+      "amount": -38.43,
+      "type": "spending",
+      "category": "Boodschappen",
+      "counterparty": "Voorbeeldwinkel 2"
+    },
+    {
+      "date": "2026-06-20",
+      "month": "2026-06",
+      "account": "Testbank Zicht",
+      "amount": -12.74,
+      "type": "spending",
+      "category": "Gezondheid",
+      "counterparty": "Apotheek Fictief"
+    },
+    {
+      "date": "2026-06-15",
+      "month": "2026-06",
+      "account": "Testbank Zicht",
+      "amount": -950,
+      "type": "spending",
+      "category": "Wonen",
+      "counterparty": "Fictieve Verhuur bv"
+    },
+    {
+      "date": "2026-06-15",
+      "month": "2026-06",
+      "account": "Testbank Zicht",
+      "amount": -12.99,
+      "type": "spending",
+      "category": "Abonnementen",
+      "counterparty": "Streamdienst Demo"
+    },
+    {
+      "date": "2026-06-11",
+      "month": "2026-06",
+      "account": "Testbank Zicht",
+      "amount": -33.74,
+      "type": "spending",
+      "category": "Boodschappen",
+      "counterparty": "Voorbeeldwinkel 3"
+    },
+    {
+      "date": "2026-06-07",
+      "month": "2026-06",
+      "account": "Testbank Zicht",
+      "amount": -47.42,
+      "type": "spending",
+      "category": "Vervoer",
+      "counterparty": "Demo Tankstation 2"
+    },
+    {
+      "date": "2026-06-06",
+      "month": "2026-06",
+      "account": "Testbank Zicht",
+      "amount": -36.32,
+      "type": "spending",
+      "category": "Restaurant",
+      "counterparty": "Café Verzonnen 1"
+    },
+    {
+      "date": "2026-06-05",
+      "month": "2026-06",
+      "account": "Testbank Creditcard",
+      "amount": 150,
+      "type": "excluded",
+      "category": "Interne overschrijving",
+      "counterparty": "Eigen rekening (test)"
+    },
+    {
+      "date": "2026-06-03",
+      "month": "2026-06",
+      "account": "Testbank Zicht",
+      "amount": -142.62,
+      "type": "spending",
+      "category": "Energie",
+      "counterparty": "Testenergie nv"
+    },
+    {
+      "date": "2026-06-03",
+      "month": "2026-06",
+      "account": "Testbank Zicht",
+      "amount": -53.26,
+      "type": "spending",
+      "category": "Restaurant",
+      "counterparty": "Café Verzonnen 2"
+    },
+    {
+      "date": "2026-06-01",
+      "month": "2026-06",
+      "account": "Testbank Zicht",
+      "amount": -56.72,
+      "type": "spending",
+      "category": "Boodschappen",
+      "counterparty": "Voorbeeldwinkel 1"
+    }
+  ],
+  "payments": [
+    {
+      "title": "Factuur water (test)",
+      "payee": "Testwater",
+      "amount": 64.2,
+      "due": "2026-11-10",
+      "status": "open"
+    },
+    {
+      "title": "Verzekering auto (test)",
+      "payee": "Voorbeeldverzekeraar",
+      "amount": 412.75,
+      "due": "2026-12-05",
+      "status": "open"
+    },
+    {
+      "title": "Tandarts (test)",
+      "payee": "Praktijk Fictief",
+      "amount": 38,
+      "due": "2026-12-15",
+      "status": "open"
+    },
+    {
+      "title": "Belasting (test)",
+      "payee": "Demo Overheid",
+      "amount": 120,
+      "due": "2026-11-30",
+      "status": "onbekend"
+    },
+    {
+      "title": "Factuur internet (test)",
+      "payee": "Testtelecom",
+      "amount": 49.99,
+      "due": "2026-11-01",
+      "status": "betaald"
+    },
+    {
+      "title": "Lidgeld club (test)",
+      "payee": "Sportclub Voorbeeld",
+      "amount": 95,
+      "due": "2026-10-15",
+      "status": "betaald"
+    }
+  ],
+  "subscriptions": [
+    {
+      "name": "Streamdienst Demo",
+      "category": "Abonnementen",
+      "amount": 12.99,
+      "interval": "maandelijks",
+      "lastSeen": "2026-11-03"
+    },
+    {
+      "name": "Testtelecom",
+      "category": "Internet",
+      "amount": 49.99,
+      "interval": "maandelijks",
+      "lastSeen": "2026-11-01"
+    },
+    {
+      "name": "Voorbeeldkrant",
+      "category": "Media",
+      "amount": 180,
+      "interval": "jaarlijks",
+      "lastSeen": "2026-03-14"
+    },
+    {
+      "name": "Cloudopslag Fictief",
+      "category": "Software",
+      "amount": 29.97,
+      "interval": "driemaandelijks",
+      "lastSeen": "2026-09-20"
+    }
+  ],
+  "networth": [
+    {
+      "month": "2026-06",
+      "total": 18555.28,
+      "estimated": true,
+      "parts": {
+        "spaar": 8000,
+        "aandelen": 5097.86,
+        "bolero": 2500
+      }
+    },
+    {
+      "month": "2026-07",
+      "total": 19065.08,
+      "estimated": true,
+      "parts": {
+        "spaar": 8300,
+        "aandelen": 5178.66,
+        "bolero": 2560
+      }
+    },
+    {
+      "month": "2026-08",
+      "total": 19582.02,
+      "estimated": false,
+      "parts": {
+        "spaar": 8600,
+        "aandelen": 5321.7,
+        "bolero": 2620
+      }
+    },
+    {
+      "month": "2026-09",
+      "total": 20110.81,
+      "estimated": false,
+      "parts": {
+        "spaar": 8900,
+        "aandelen": 5424.38,
+        "bolero": 2680
+      }
+    },
+    {
+      "month": "2026-10",
+      "total": 20616.61,
+      "estimated": false,
+      "parts": {
+        "spaar": 9200,
+        "aandelen": 5501.73,
+        "bolero": 2740
+      }
+    },
+    {
+      "month": "2026-11",
+      "total": 21235.33,
+      "estimated": false,
+      "parts": {
+        "spaar": 9500,
+        "aandelen": 5681.87,
+        "bolero": 2800
+      }
+    }
+  ]
+}

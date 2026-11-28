@@ -46,6 +46,7 @@ Alle routes vragen een geldige Access-login, behalve de twee importroutes met he
 | `POST /api/runs/gpx` | `multipart/form-data`, veld `file` (max 10 MB), optioneel `notes`, `avgHr`, `name` |
 | `DELETE /api/runs/:id` | run verwijderen |
 | `GET /api/auth-check` | `204` als je aangemeld bent (voor Caddy `forward_auth`) |
+| `GET /api/finance` | privé financieel overzicht, zie `FINANCE.md` |
 
 **Velden van een run**
 
