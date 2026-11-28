@@ -1,5 +1,5 @@
 import {
-  RACE, DEFAULTS, buildPlan, matchRuns, normaliseSettings, daysBetween, fmtPace, fmtDuration, parseDate, TYPE_LABELS,
+  RACE, DEFAULTS, buildPlan, matchRuns, normaliseSettings, daysBetween, fmtPace, fmtDuration, parseDate, TYPE_LABELS, isRun,
 } from './plan.js';
 
 const $ = (id) => document.getElementById(id);
@@ -117,7 +117,7 @@ const STATUS_TEXT = {
 };
 
 function workoutHtml(d) {
-  const km = d.type === 'rest' ? '' : `<div class="km">${fmtKm(d.km)} km${d.pace ? ` · ${esc(d.pace)}` : ''}</div>`;
+  const km = !isRun(d) ? '' : `<div class="km">${fmtKm(d.km)} km${d.pace ? ` · ${esc(d.pace)}` : ''}</div>`;
   return `<h3>${esc(d.title)}</h3>${km}${d.detail ? `<p>${esc(d.detail)}</p>` : ''}`;
 }
 
@@ -126,7 +126,7 @@ function renderToday(plan, matched) {
   const body = $('today-body');
   const t = state.today;
   if (t < days[0].date) {
-    const first = days.find((d) => d.type !== 'rest');
+    const first = days.find(isRun);
     body.innerHTML = `<p>Het schema start op maandag ${fmtDay(days[0].date)}.</p><div class="next"><b>Eerste training (${DAYS[first.dow]} ${fmtDay(first.date)}):</b> ${workoutHtml(first)}</div>`;
     return;
   }
@@ -135,7 +135,7 @@ function renderToday(plan, matched) {
     return;
   }
   const today = days.find((d) => d.date === t);
-  const next = days.find((d) => d.date > t && d.type !== 'rest');
+  const next = days.find((d) => d.date > t && isRun(d));
   let html = workoutHtml(today);
   if (today.actualKm > 0) html += `<p class="status st-${today.status}">${STATUS_TEXT[today.status]} — ${fmtKm(today.actualKm)} km gelopen</p>`;
   if (next) html += `<div class="next"><b>Volgende: ${DAYS[next.dow]} ${fmtDay(next.date)}</b> — ${esc(next.title)}, ${fmtKm(next.km)} km</div>`;
