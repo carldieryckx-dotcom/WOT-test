@@ -8,17 +8,18 @@
 
 ## Samenwerking met Grokbot
 
-Carl liet een samenwerkingsovereenkomst opstellen tussen Grokbot en Claude Code. De volledige tekst staat op het Notion-overlegbord ("Samenwerkingsovereenkomst Grokbot en Claude Code"). Kort:
+Carl liet een samenwerkingsovereenkomst opstellen tussen Grokbot (DRX) en Claude Code. Deze sectie bevat de afspraken. Grokbot en Claude Code overleggen **alleen via GitHub**. Het Notion-overlegbord en de webhookmelding gebruiken ze niet voor hun overleg.
 
 - **Rollen:** Claude Code schrijft en onderhoudt de code. Grokbot kijkt elke codewijziging na en beheert de koppelingen: Cloudflare, Caddy, de server, instellingen en toegangen. Claude Code past koppelingen niet zelf aan, maar vraagt het aan Grokbot.
-- **Niets gaat live zonder Grokbot:** elke codewijziging gaat via een pull request. Zet er een kaart voor op het overlegbord (Voor = Grokbot, status *Wacht op antwoord*) met de link naar de PR en vier punten: wat er is aangepast, waarom, wat het effect is en wat je van Grokbot nodig hebt. Stuur daarna de webhookmelding. Kaart en melding zijn alleen ter informatie. Merge pas als Grokbot op de PR heeft goedgekeurd: een PR-comment die begint met "DRX: goedgekeurd". Begint de comment met "DRX: teruggestuurd", pas dan eerst aan.
+- **Niets gaat live zonder Grokbot:** elke codewijziging gaat via een pull request. Zet in de PR-beschrijving vier punten: wat er is aangepast, waarom, wat het effect is en wat je van Grokbot nodig hebt. Zet er geen kaart voor op het overlegbord en stuur er geen webhookmelding voor. Merge pas als Grokbot op de PR heeft goedgekeurd: een PR-comment die begint met "DRX: goedgekeurd". Begint de comment met "DRX: teruggestuurd", pas dan eerst aan.
+- **Vragen en verzoeken:** vragen aan Grokbot en verzoeken om een koppeling aan te passen gaan in een GitHub-issue of een comment. Algemene meldingen gaan in issue #12.
 - **Melden en bevestigen:** meld elke wijziging, hoe klein ook. De ander bevestigt kort.
-- **Inchecken:** is het een tijdje stil, check dan in: waar sta je, waar werk je aan, waar zit je vast en op wie wacht je. Blijft een antwoord uit, check dan een tweede keer in en breng Carl op de hoogte.
+- **Inchecken:** check in op GitHub (issue of comment), niet in Notion. Is het een tijdje stil, check dan in: waar sta je, waar werk je aan, waar zit je vast en op wie wacht je. Blijft een antwoord uit, check dan een tweede keer in en breng Carl op de hoogte.
 - **Onenigheid:** leg het punt met beide standpunten voor aan Carl. Carl beslist.
 
 ## Melding na werk in Notion
 
-Stuur een melding naar de webhook telkens je werk in Notion klaarzet, bijvoorbeeld een kaart op het Claude ↔ Grokbot-overlegbord. Stuur één melding per pagina.
+Stuur een melding naar de webhook telkens je werk in Notion klaarzet. Stuur één melding per pagina. Dit geldt niet voor overleg met Grokbot: dat loopt alleen via GitHub (zie hierboven).
 
 ```bash
 jq -n --arg u "<link naar de pagina>" --arg s "<wat er klaar is>" \
